@@ -6,13 +6,13 @@ A system where creators run limited-inventory live product drops. Users can foll
 
 
 ## Services:
-**User Service:** Authentication and user management
-**Creator Service:** Creator profiles and content
-**Product Service:** Product catalog and drop scheduling
-**Inventory Service:** Stock control with distributed locks
-**Order Service:** Idempotent order processing
-**Payment Service:** Transaction handling with audit logs
-**Notification Service:** Real-time WebSocket delivery
+**User Service:** Authentication and user management<br>
+**Creator Service:** Creator profiles and content<br>
+**Product Service:** Product catalog and drop scheduling<br>
+**Inventory Service:** Stock control with distributed locks<br>
+**Order Service:** Idempotent order processing<br>
+**Payment Service:** Transaction handling with audit logs<br>
+**Notification Service:** Real-time WebSocket delivery<br>
 
 ## Technical Solutions
 ### **Preventing Overselling**
@@ -34,17 +34,17 @@ WebSocket connections with load balancers deliver updates within 2 seconds. Fan-
 All services connect to centralized monitoring tools to track performance metrics, request volumes, and system health.
 
 ## **Database Strategy:**
--**PostgreSQL:** Orders, payments, audit logs (ACID transactions)
--**MongoDB:** Products, profiles (flexible schema)
--**Redis:** Caching, sessions, distributed locks
+-**PostgreSQL:** Orders, payments, audit logs (ACID transactions)<br>
+-**MongoDB:** Products, profiles (flexible schema)<br>
+-**Redis:** Caching, sessions, distributed locks<br>
 
 ## **Scaling Approach:**
--Sharded followers table by creator_id
--Auto-scaling during traffic bursts (1,500 RPS)
--Regional WebSocket servers
+-Sharded followers table by creator_id<br>
+-Auto-scaling during traffic bursts (1,500 RPS)<br>
+-Regional WebSocket servers<br>
 
 ## **Key Tradeoffs:**
--Distributed locks prevent overselling but create bottlenecks
--Microservices enable independent scaling but add complexity
--PostgreSQL + MongoDB optimal for different data types but increases infrastructure complexity
+-Distributed locks prevent overselling but create bottlenecks<br>
+-Microservices enable independent scaling but add complexity<br>
+-PostgreSQL + MongoDB optimal for different data types but increases infrastructure complexity<br>
 -Real-time WebSockets reduce latency but increase resource usage
