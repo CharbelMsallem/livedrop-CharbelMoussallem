@@ -1,4 +1,4 @@
-# Support Assistant Probe Log
+# Typeahead Search Suggestion Probe Log
 
 ```log
 [2025-09-22 14:06:01] Input: "overs"
