@@ -1,0 +1,182 @@
+[
+  {
+    "id": "p001",
+    "title": "Wireless Noise-Cancelling Headphones",
+    "price": 299.99,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
+    "tags": ["electronics", "audio", "wireless"],
+    "stockQty": 45,
+    "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life."
+  },
+  {
+    "id": "p002",
+    "title": "Smart Watch Pro",
+    "price": 399.99,
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop",
+    "tags": ["electronics", "wearable", "fitness"],
+    "stockQty": 32,
+    "description": "Advanced smartwatch with health tracking, GPS, and water resistance."
+  },
+  {
+    "id": "p003",
+    "title": "Minimalist Leather Backpack",
+    "price": 129.99,
+    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop",
+    "tags": ["fashion", "accessories", "leather"],
+    "stockQty": 18,
+    "description": "Handcrafted leather backpack with laptop compartment and premium stitching."
+  },
+  {
+    "id": "p004",
+    "title": "Mechanical Keyboard RGB",
+    "price": 159.99,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&h=500&fit=crop",
+    "tags": ["electronics", "gaming", "accessories"],
+    "stockQty": 67,
+    "description": "Customizable mechanical keyboard with RGB lighting and tactile switches."
+  },
+  {
+    "id": "p005",
+    "title": "Portable Bluetooth Speaker",
+    "price": 89.99,
+    "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&h=500&fit=crop",
+    "tags": ["electronics", "audio", "wireless"],
+    "stockQty": 91,
+    "description": "Waterproof speaker with 360° sound and 12-hour battery life."
+  },
+  {
+    "id": "p006",
+    "title": "Designer Sunglasses",
+    "price": 199.99,
+    "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&h=500&fit=crop",
+    "tags": ["fashion", "accessories", "eyewear"],
+    "stockQty": 24,
+    "description": "Polarized UV400 protection with titanium frame and scratch-resistant lenses."
+  },
+  {
+    "id": "p007",
+    "title": "Yoga Mat Premium",
+    "price": 49.99,
+    "image": "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&h=500&fit=crop",
+    "tags": ["fitness", "wellness", "accessories"],
+    "stockQty": 156,
+    "description": "Extra-thick non-slip yoga mat with carrying strap and eco-friendly materials."
+  },
+  {
+    "id": "p008",
+    "title": "Coffee Maker Espresso",
+    "price": 249.99,
+    "image": "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=500&h=500&fit=crop",
+    "tags": ["home", "kitchen", "electronics"],
+    "stockQty": 38,
+    "description": "15-bar pump espresso machine with milk frother and programmable settings."
+  },
+  {
+    "id": "p009",
+    "title": "Running Shoes Performance",
+    "price": 139.99,
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop",
+    "tags": ["fashion", "fitness", "footwear"],
+    "stockQty": 73,
+    "description": "Lightweight running shoes with responsive cushioning and breathable mesh."
+  },
+  {
+    "id": "p010",
+    "title": "Smartphone Gimbal Stabilizer",
+    "price": 119.99,
+    "image": "https://images.unsplash.com/photo-1519558260268-cde7e03a0152?w=500&h=500&fit=crop",
+    "tags": ["electronics", "photography", "accessories"],
+    "stockQty": 42,
+    "description": "3-axis stabilizer for smooth video recording with foldable design."
+  },
+  {
+    "id": "p011",
+    "title": "Desk Lamp LED Smart",
+    "price": 69.99,
+    "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500&h=500&fit=crop",
+    "tags": ["home", "electronics", "lighting"],
+    "stockQty": 88,
+    "description": "Adjustable LED desk lamp with wireless charging base and color temperature control."
+  },
+  {
+    "id": "p012",
+    "title": "Water Bottle Insulated",
+    "price": 34.99,
+    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop",
+    "tags": ["fitness", "wellness", "accessories"],
+    "stockQty": 203,
+    "description": "Double-wall vacuum insulated bottle keeps drinks cold for 24 hours."
+  },
+  {
+    "id": "p013",
+    "title": "Gaming Mouse Wireless",
+    "price": 79.99,
+    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&h=500&fit=crop",
+    "tags": ["electronics", "gaming", "accessories"],
+    "stockQty": 114,
+    "description": "Precision gaming mouse with 16000 DPI sensor and customizable buttons."
+  },
+  {
+    "id": "p014",
+    "title": "Canvas Tote Bag",
+    "price": 39.99,
+    "image": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&h=500&fit=crop",
+    "tags": ["fashion", "accessories", "eco-friendly"],
+    "stockQty": 167,
+    "description": "Durable organic cotton tote with reinforced handles and inner pocket."
+  },
+  {
+    "id": "p015",
+    "title": "Wireless Earbuds Pro",
+    "price": 179.99,
+    "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&h=500&fit=crop",
+    "tags": ["electronics", "audio", "wireless"],
+    "stockQty": 58,
+    "description": "True wireless earbuds with active noise cancellation and transparency mode."
+  },
+  {
+    "id": "p016",
+    "title": "Plant Pot Ceramic Set",
+    "price": 44.99,
+    "image": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&h=500&fit=crop",
+    "tags": ["home", "decor", "accessories"],
+    "stockQty": 95,
+    "description": "Set of 3 handmade ceramic planters with drainage holes and saucers."
+  },
+  {
+    "id": "p017",
+    "title": "Fitness Tracker Band",
+    "price": 59.99,
+    "image": "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=500&h=500&fit=crop",
+    "tags": ["electronics", "fitness", "wearable"],
+    "stockQty": 129,
+    "description": "Activity tracker with heart rate monitor, sleep tracking, and 7-day battery."
+  },
+  {
+    "id": "p018",
+    "title": "Hoodie Premium Cotton",
+    "price": 79.99,
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop",
+    "tags": ["fashion", "clothing", "casual"],
+    "stockQty": 82,
+    "description": "Heavyweight cotton hoodie with kangaroo pocket and ribbed cuffs."
+  },
+  {
+    "id": "p019",
+    "title": "Portable Charger 20000mAh",
+    "price": 49.99,
+    "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&h=500&fit=crop",
+    "tags": ["electronics", "accessories", "portable"],
+    "stockQty": 143,
+    "description": "High-capacity power bank with fast charging and dual USB ports."
+  },
+  {
+    "id": "p020",
+    "title": "Scented Candle Gift Set",
+    "price": 54.99,
+    "image": "https://images.unsplash.com/photo-1602874801006-50e039fdeb3e?w=500&h=500&fit=crop",
+    "tags": ["home", "decor", "wellness"],
+    "stockQty": 76,
+    "description": "Luxury candle set with natural soy wax and essential oils, 40-hour burn time."
+  }
+]
