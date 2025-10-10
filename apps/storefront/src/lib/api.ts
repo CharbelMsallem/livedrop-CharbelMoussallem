@@ -13,7 +13,7 @@ export interface OrderStatus {
   status: 'Placed' | 'Packed' | 'Shipped' | 'Delivered';
   carrier?: string;
   eta?: string;
-  placedAt: string;
+  placedAt: number; // Changed to number for timestamp
 }
 
 export interface CartItem extends Product {
@@ -37,34 +37,45 @@ export async function getProduct(id: string): Promise<Product | null> {
 }
 
 export function getOrderStatus(id: string): OrderStatus | null {
-  if (mockOrders[id]) return mockOrders[id];
-  
-  const statuses: OrderStatus['status'][] = ['Placed', 'Packed', 'Shipped', 'Delivered'];
-  const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-  
-  const order: OrderStatus = {
-    orderId: id,
-    status: randomStatus,
-    placedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-  };
-  
-  if (randomStatus === 'Shipped' || randomStatus === 'Delivered') {
-    order.carrier = ['FedEx', 'UPS', 'DHL'][Math.floor(Math.random() * 3)];
-    const daysAhead = randomStatus === 'Shipped' ? Math.ceil(Math.random() * 3) : 0;
-    order.eta = new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const order = mockOrders[id];
+  if (!order) return null;
+
+  const now = Date.now();
+  const elapsedSeconds = (now - order.placedAt) / 1000;
+
+  let status: OrderStatus['status'] = 'Placed';
+  if (elapsedSeconds > 12) {
+    status = 'Delivered';
+  } else if (elapsedSeconds > 7) {
+    status = 'Shipped';
+  } else if (elapsedSeconds > 3) {
+    status = 'Packed';
   }
   
-  mockOrders[id] = order;
-  return order;
+  const updatedOrder: OrderStatus = { ...order, status };
+
+  if (status === 'Shipped' || status === 'Delivered') {
+    if (!order.carrier) { // Assign carrier only once when it ships
+      updatedOrder.carrier = ['FedEx', 'UPS', 'DHL'][Math.floor(Math.random() * 3)];
+      const deliveryDate = new Date(order.placedAt + 13 * 1000);
+      updatedOrder.eta = deliveryDate.toISOString().split('T')[0];
+    } else {
+      updatedOrder.carrier = order.carrier;
+      updatedOrder.eta = order.eta;
+    }
+  }
+  
+  return updatedOrder;
 }
 
+// @ts-ignore - cart is unused for now but required by the spec
 export function placeOrder(cart: CartItem[]): { orderId: string } {
   const orderId = 'SL' + Math.random().toString(36).substring(2, 12).toUpperCase();
   
   mockOrders[orderId] = {
     orderId,
     status: 'Placed',
-    placedAt: new Date().toISOString(),
+    placedAt: Date.now(),
   };
   
   return { orderId };

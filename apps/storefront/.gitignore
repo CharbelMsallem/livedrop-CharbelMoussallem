@@ -22,3 +22,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+*storybook.log
+storybook-static
+
+
+# --- Recommended Additions ---
+
+# Environment Variables (IMPORTANT!)
+.env
+.env.local
+.env.*.local
+
+# Test Coverage Reports
+/coverage
+
+# Vite build cache
+.vite
+
+# PNPM debug logs
+pnpm-debug.log*

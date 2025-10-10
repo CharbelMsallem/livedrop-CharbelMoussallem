@@ -50,13 +50,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         aria-hidden="true"
       />
       <div
-        className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col animate-slide-in"
+        className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-50 flex flex-col animate-slide-in"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cart-title"
       >
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 id="cart-title" className="text-2xl font-bold">Shopping Cart</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+          <h2 id="cart-title" className="text-xl sm:text-2xl font-bold">Shopping Cart</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -68,7 +68,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           </button>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {items.length === 0 ? (
             <div className="text-center py-12">
               <svg
@@ -84,7 +84,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              <p className="text-gray-500 text-lg">Your cart is empty</p>
+              <p className="text-gray-500">Your cart is empty</p>
             </div>
           ) : (
             items.map((item) => <CartItem key={item.id} item={item} />)
@@ -92,10 +92,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
         
         {items.length > 0 && (
-          <div className="border-t p-6 space-y-4 bg-gray-50">
-            <div className="flex justify-between items-center text-xl font-bold">
+          <div className="border-t p-4 sm:p-6 space-y-4 bg-gray-50">
+            <div className="flex justify-between items-center text-lg sm:text-xl font-bold">
               <span>Total</span>
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 {formatCurrency(getTotal())}
               </span>
             </div>

@@ -7,12 +7,12 @@ import { Link, useRouter } from '../lib/router';
 export function CartPage() {
   const { items, getTotal } = useCartStore();
   const { navigate } = useRouter();
-  
+
   const subtotal = getTotal();
   const shipping = subtotal > 100 ? 0 : 9.99;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  
+
   if (items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
@@ -37,22 +37,22 @@ export function CartPage() {
       </div>
     );
   }
-  
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
-      
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
+      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 sm:mb-8">Shopping Cart</h1>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
             <CartItem key={item.id} item={item} />
           ))}
         </div>
-        
+
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
-            
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
@@ -71,14 +71,14 @@ export function CartPage() {
                 <span>Tax (8%)</span>
                 <span>{formatCurrency(tax)}</span>
               </div>
-              <div className="border-t pt-3 flex justify-between text-xl font-bold">
+              <div className="border-t pt-3 flex justify-between text-lg sm:text-xl font-bold">
                 <span>Total</span>
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   {formatCurrency(total)}
                 </span>
               </div>
             </div>
-            
+
             <Button
               onClick={() => navigate('/checkout')}
               size="lg"
@@ -86,7 +86,7 @@ export function CartPage() {
             >
               Proceed to Checkout
             </Button>
-            
+
             <Link to="/">
               <Button variant="outline" className="w-full">
                 Continue Shopping

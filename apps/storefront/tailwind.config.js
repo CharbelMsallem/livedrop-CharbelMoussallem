@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in',
         'slide-up': 'slideUp 0.4s ease-out',

@@ -1,182 +1,182 @@
 [
   {
     "id": "p001",
-    "title": "Wireless Noise-Cancelling Headphones",
-    "price": 299.99,
-    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
-    "tags": ["electronics", "audio", "wireless"],
-    "stockQty": 45,
-    "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life."
+    "title": "4K Ultra HD Smart TV",
+    "price": 700,
+    "image": "https://images.unsplash.com/photo-1646861039459-fd9e3aabf3fb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1926",
+    "tags": ["TV", "Smart Home"],
+    "stockQty": 50,
+    "description": "A 55-inch 4K UHD Smart TV with stunning picture quality and streaming apps built-in."
   },
   {
     "id": "p002",
-    "title": "Smart Watch Pro",
-    "price": 399.99,
-    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop",
-    "tags": ["electronics", "wearable", "fitness"],
-    "stockQty": 32,
-    "description": "Advanced smartwatch with health tracking, GPS, and water resistance."
+    "title": "Wireless Surround Sound System",
+    "price": 500,
+    "image": "https://images.unsplash.com/photo-1590783609742-82564b33e5fd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1364",
+    "tags": ["Audio", "Home Theater"],
+    "stockQty": 40,
+    "description": "A 5.1 channel wireless surround sound system for an immersive home theater experience."
   },
   {
     "id": "p003",
-    "title": "Minimalist Leather Backpack",
-    "price": 129.99,
-    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop",
-    "tags": ["fashion", "accessories", "leather"],
-    "stockQty": 18,
-    "description": "Handcrafted leather backpack with laptop compartment and premium stitching."
+    "title": "13-inch Laptop with M3 Chip",
+    "price": 1200,
+    "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Computer", "Laptop"],
+    "stockQty": 30,
+    "description": "A powerful and portable 13-inch laptop perfect for work and creativity."
   },
   {
     "id": "p004",
-    "title": "Mechanical Keyboard RGB",
-    "price": 159.99,
-    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&h=500&fit=crop",
-    "tags": ["electronics", "gaming", "accessories"],
-    "stockQty": 67,
-    "description": "Customizable mechanical keyboard with RGB lighting and tactile switches."
+    "title": "Curved Gaming Monitor",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1603481588273-2f908a9a7a1b?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Gaming", "Monitor"],
+    "stockQty": 60,
+    "description": "A 27-inch curved gaming monitor with a 144Hz refresh rate for smooth gameplay."
   },
   {
     "id": "p005",
-    "title": "Portable Bluetooth Speaker",
-    "price": 89.99,
-    "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&h=500&fit=crop",
-    "tags": ["electronics", "audio", "wireless"],
-    "stockQty": 91,
-    "description": "Waterproof speaker with 360° sound and 12-hour battery life."
+    "title": "Noise-Cancelling Over-Ear Headphones",
+    "price": 350,
+    "image": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1288",
+    "tags": ["Audio", "Headphones"],
+    "stockQty": 80,
+    "description": "High-fidelity noise-cancelling headphones with a 30-hour battery life."
   },
   {
     "id": "p006",
-    "title": "Designer Sunglasses",
-    "price": 199.99,
-    "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&h=500&fit=crop",
-    "tags": ["fashion", "accessories", "eyewear"],
-    "stockQty": 24,
-    "description": "Polarized UV400 protection with titanium frame and scratch-resistant lenses."
+    "title": "Smartwatch with Health Tracking",
+    "price": 250,
+    "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Wearable", "Fitness"],
+    "stockQty": 70,
+    "description": "A sleek smartwatch with GPS, heart rate monitoring, and a vibrant display."
   },
   {
     "id": "p007",
-    "title": "Yoga Mat Premium",
-    "price": 49.99,
-    "image": "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&h=500&fit=crop",
-    "tags": ["fitness", "wellness", "accessories"],
-    "stockQty": 156,
-    "description": "Extra-thick non-slip yoga mat with carrying strap and eco-friendly materials."
+    "title": "Portable Power Bank",
+    "price": 50,
+    "image": "https://images.unsplash.com/photo-1706275399494-fb26bbc5da63?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1760",
+    "tags": ["Mobile", "Accessory"],
+    "stockQty": 150,
+    "description": "A 20,000mAh portable power bank to keep your devices charged on the go."
   },
   {
     "id": "p008",
-    "title": "Coffee Maker Espresso",
-    "price": 249.99,
-    "image": "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=500&h=500&fit=crop",
-    "tags": ["home", "kitchen", "electronics"],
-    "stockQty": 38,
-    "description": "15-bar pump espresso machine with milk frother and programmable settings."
+    "title": "Wireless Charging Pad",
+    "price": 40,
+    "image": "https://images.unsplash.com/photo-1633381638729-27f730955c23?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Mobile", "Accessory"],
+    "stockQty": 200,
+    "description": "A fast wireless charging pad compatible with all Qi-enabled devices."
   },
   {
     "id": "p009",
-    "title": "Running Shoes Performance",
-    "price": 139.99,
-    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop",
-    "tags": ["fashion", "fitness", "footwear"],
-    "stockQty": 73,
-    "description": "Lightweight running shoes with responsive cushioning and breathable mesh."
+    "title": "Digital SLR Camera",
+    "price": 900,
+    "image": "https://images.unsplash.com/photo-1603208234872-619ffa1209cb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1274",
+    "tags": ["Camera", "Photography"],
+    "stockQty": 25,
+    "description": "A 24MP DSLR camera with an 18-55mm lens, perfect for aspiring photographers."
   },
   {
     "id": "p010",
-    "title": "Smartphone Gimbal Stabilizer",
-    "price": 119.99,
-    "image": "https://images.unsplash.com/photo-1519558260268-cde7e03a0152?w=500&h=500&fit=crop",
-    "tags": ["electronics", "photography", "accessories"],
-    "stockQty": 42,
-    "description": "3-axis stabilizer for smooth video recording with foldable design."
+    "title": "Camera Tripod",
+    "price": 80,
+    "image": "https://images.unsplash.com/photo-1657741164019-98bd2bf3fc45?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=927",
+    "tags": ["Camera", "Accessory"],
+    "stockQty": 100,
+    "description": "A lightweight and sturdy tripod for capturing stable shots and videos."
   },
   {
     "id": "p011",
-    "title": "Desk Lamp LED Smart",
-    "price": 69.99,
-    "image": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500&h=500&fit=crop",
-    "tags": ["home", "electronics", "lighting"],
-    "stockQty": 88,
-    "description": "Adjustable LED desk lamp with wireless charging base and color temperature control."
+    "title": "Smart Home Hub",
+    "price": 100,
+    "image": "https://images.unsplash.com/photo-1729839206142-d03c98f921fd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Smart Home", "Automation"],
+    "stockQty": 90,
+    "description": "Control all your smart home devices with this central smart home hub."
   },
   {
     "id": "p012",
-    "title": "Water Bottle Insulated",
-    "price": 34.99,
-    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop",
-    "tags": ["fitness", "wellness", "accessories"],
-    "stockQty": 203,
-    "description": "Double-wall vacuum insulated bottle keeps drinks cold for 24 hours."
+    "title": "Smart LED Light Bulbs",
+    "price": 60,
+    "image": "https://images.unsplash.com/photo-1711006155490-ec01a0ecf0de?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2350",
+    "tags": ["Smart Home", "Lighting"],
+    "stockQty": 120,
+    "description": "A pack of 4 smart LED light bulbs with customizable colors and voice control."
   },
   {
     "id": "p013",
-    "title": "Gaming Mouse Wireless",
-    "price": 79.99,
-    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&h=500&fit=crop",
-    "tags": ["electronics", "gaming", "accessories"],
-    "stockQty": 114,
-    "description": "Precision gaming mouse with 16000 DPI sensor and customizable buttons."
+    "title": "Next-Gen Gaming Console",
+    "price": 500,
+    "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Gaming", "Console"],
+    "stockQty": 35,
+    "description": "The latest gaming console with next-gen graphics and an ultra-fast SSD."
   },
   {
     "id": "p014",
-    "title": "Canvas Tote Bag",
-    "price": 39.99,
-    "image": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&h=500&fit=crop",
-    "tags": ["fashion", "accessories", "eco-friendly"],
-    "stockQty": 167,
-    "description": "Durable organic cotton tote with reinforced handles and inner pocket."
+    "title": "Virtual Reality Headset",
+    "price": 400,
+    "image": "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Gaming", "VR"],
+    "stockQty": 45,
+    "description": "An immersive VR headset with high-resolution displays and intuitive controls."
   },
   {
     "id": "p015",
-    "title": "Wireless Earbuds Pro",
-    "price": 179.99,
-    "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&h=500&fit=crop",
-    "tags": ["electronics", "audio", "wireless"],
-    "stockQty": 58,
-    "description": "True wireless earbuds with active noise cancellation and transparency mode."
+    "title": "4K Camera Drone",
+    "price": 800,
+    "image": "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=800&q=80",
+    "tags": ["Camera", "Drone"],
+    "stockQty": 20,
+    "description": "A foldable 4K drone with a 3-axis gimbal for capturing stunning aerial footage."
   },
   {
     "id": "p016",
-    "title": "Plant Pot Ceramic Set",
-    "price": 44.99,
-    "image": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&h=500&fit=crop",
-    "tags": ["home", "decor", "accessories"],
+    "title": "Smart Electric Toothbrush",
+    "price": 120,
+    "image": "https://images.unsplash.com/photo-1575325345210-a65324e66537?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Health", "Smart Home"],
     "stockQty": 95,
-    "description": "Set of 3 handmade ceramic planters with drainage holes and saucers."
+    "description": "An electric toothbrush with AI-powered brushing guidance and multiple cleaning modes."
   },
   {
     "id": "p017",
-    "title": "Fitness Tracker Band",
-    "price": 59.99,
-    "image": "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=500&h=500&fit=crop",
-    "tags": ["electronics", "fitness", "wearable"],
-    "stockQty": 129,
-    "description": "Activity tracker with heart rate monitor, sleep tracking, and 7-day battery."
+    "title": "Robotic Vacuum Cleaner",
+    "price": 600,
+    "image": "https://images.unsplash.com/photo-1757478558372-43c94b3268bb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Smart Home", "Appliance"],
+    "stockQty": 55,
+    "description": "A smart robotic vacuum that automatically cleans your floors and recharges itself."
   },
   {
     "id": "p018",
-    "title": "Hoodie Premium Cotton",
-    "price": 79.99,
-    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop",
-    "tags": ["fashion", "clothing", "casual"],
-    "stockQty": 82,
-    "description": "Heavyweight cotton hoodie with kangaroo pocket and ribbed cuffs."
+    "title": "Smart Air Purifier",
+    "price": 200,
+    "image": "https://images.unsplash.com/photo-1732229033839-c76b4071c449?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Smart Home", "Health"],
+    "stockQty": 65,
+    "description": "An air purifier with a HEPA filter that removes allergens and pollutants from the air."
   },
   {
     "id": "p019",
-    "title": "Portable Charger 20000mAh",
-    "price": 49.99,
-    "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&h=500&fit=crop",
-    "tags": ["electronics", "accessories", "portable"],
-    "stockQty": 143,
-    "description": "High-capacity power bank with fast charging and dual USB ports."
+    "title": "Mechanical Bluetooth Keyboard",
+    "price": 150,
+    "image": "https://images.unsplash.com/photo-1641919724995-203197f2955a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340",
+    "tags": ["Computer", "Accessory"],
+    "stockQty": 110,
+    "description": "A compact mechanical keyboard with Bluetooth connectivity and customizable RGB lighting."
   },
   {
     "id": "p020",
-    "title": "Scented Candle Gift Set",
-    "price": 54.99,
-    "image": "https://images.unsplash.com/photo-1602874801006-50e039fdeb3e?w=500&h=500&fit=crop",
-    "tags": ["home", "decor", "wellness"],
-    "stockQty": 76,
-    "description": "Luxury candle set with natural soy wax and essential oils, 40-hour burn time."
+    "title": "1080p HD Webcam",
+    "price": 70,
+    "image": "https://images.unsplash.com/photo-1626581795188-8efb9a00eeec?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1335",
+    "tags": ["Computer", "Accessory"],
+    "stockQty": 130,
+    "description": "A 1080p HD webcam with a built-in microphone for clear video calls and streaming."
   }
 ]

@@ -72,7 +72,11 @@ export async function processQuery(query: string): Promise<string> {
       let response = `Your order (${maskedId}) is currently **${status.status}**. `;
       
       if (status.carrier && status.eta) {
-        response += `It's being shipped via ${status.carrier} and expected to arrive by ${status.eta}. `;
+        if (status.status === 'Delivered') {
+          response += `It has been shipped via ${status.carrier} and arrived on ${status.eta}. `;
+        } else {
+          response += `It's being shipped via ${status.carrier} and expected to arrive by ${status.eta}. `;
+        }
       }
       
       response += `[Order Status]`;

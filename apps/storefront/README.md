@@ -1,114 +1,58 @@
-Storefront v1
-A modern, fast e-commerce storefront built with React, TypeScript, Vite, and Tailwind CSS.
-Features
+# Shoplite Storefront (v1)
 
-🛍️ Product Catalog: Grid view with search, filters, and sorting
-📦 Product Details: Full product pages with related items
-🛒 Shopping Cart: Persistent cart with localStorage
-💳 Checkout: Simple checkout flow with order placement
-📊 Order Status: Track orders through 6 stages
-💬 Ask Support: AI-powered support assistant with ground-truth Q&A
+This is the official repository for the Shoplite Storefront, a minimal and fast UI built with React, Vite, and Tailwind CSS.
 
-Installation
-bash# Install dependencies
-pnpm install
+## Features
 
-# Or using npm
-npm install
+* **Product Catalog:** Browse, search, and filter products.
+* **Product Details Page:** View detailed information and related items.
+* **Shopping Cart:** Persistent cart with quantity management.
+* **Mock Checkout & Order Status:** A complete, mocked user journey from checkout to order tracking.
+* **AI-Powered Support:** An "Ask Support" panel to answer questions about orders and policies.
 
-# Or using yarn
-yarn install
-Development
-bash# Start development server
-pnpm dev
+---
 
-# Or
-npm run dev
-The app will be available at http://localhost:5173
-Build
-bash# Build for production
-pnpm build
+## 🚀 Getting Started
 
-# Or
-npm run build
-Test
-bash# Run unit tests
-pnpm test
+Follow these instructions to get a local copy up and running.
 
-# Or
-npm test
-Project Structure
-/apps/storefront/
-  /src/
-    /components/
-      /atoms/          # Basic UI elements (Button, Input, Badge)
-      /molecules/      # Composite components (ProductCard, SearchBar)
-      /organisms/      # Complex components (Header, CartDrawer, SupportPanel)
-    /pages/            # Page components (catalog, product, cart, checkout, order-status)
-    /lib/              # Utilities (API, router, store, format)
-    /assistant/        # Support assistant (engine, ground-truth, prompt)
-  /public/             # Static assets
-Tech Stack
+### Prerequisites
 
-React 18: UI library
-TypeScript: Type safety
-Vite: Build tool and dev server
-Tailwind CSS: Utility-first styling
-Zustand: State management
-Vitest: Unit testing
+Make sure you have the following installed on your system:
 
-Features Breakdown
-Catalog
+* **Node.js** (v18 or later recommended)
+* **pnpm** (You can install it by running `npm install -g pnpm`)
 
-Product grid with responsive layout
-Client-side search by title/tags
-Sort by price (asc/desc) or name
-Filter by product tags
-Lazy-loaded images
+### Installation & Setup
 
-Product Details
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    cd storefront
+    ```
 
-Full product information
-Stock indicator
-Related products by shared tags
-Add to cart functionality
+2.  **Install dependencies:**
+    This command will download and install all the necessary packages for the project.
+    ```bash
+    pnpm install
+    ```
 
-Cart
+---
 
-Persistent storage with localStorage
-Quantity controls (+/- buttons)
-Remove items
-Real-time total calculation
-Free shipping over $100
+## Available Scripts
 
-Checkout
+### `pnpm dev`
 
-Order summary
-Shipping information form
-Payment method selection
-Tax calculation (8%)
+Runs the app in development mode. Open [http://localhost:5173](http://localhost:5173) (or the port shown in your terminal) to view it in your browser. The page will reload when you make changes.
 
-Order Status
+### `pnpm test`
 
-Visual progress tracker
-6 stages: Placed → Packed → Shipped → In Transit → Out for Delivery → Delivered
-Carrier and ETA display for shipped orders
+Launches the test runner in the interactive watch mode. This will run all the unit tests for the components to ensure everything is working as expected.
 
-Ask Support
+### `pnpm build`
 
-Keyword-based Q&A matching
-Order status lookup by ID
-PII masking (shows last 4 digits only)
-Citation with [Qxx] format
-Polite refusal for out-of-scope queries
+Builds the app for production to the `dist` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
-Performance
+### `pnpm storybook`
 
-Cold load: ~150KB JS (gzipped)
-Lazy-loaded images
-Route transitions: <250ms (dev build)
-
-Accessibility
-
-Keyboard navigation
-Focus trapping
+Runs the Storybook server, allowing you to view and interact with all the UI components in isolation. This is great for development and documentation. It will open on a separate port (usually `6006`).
