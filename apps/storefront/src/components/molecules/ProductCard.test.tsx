@@ -4,14 +4,16 @@ import { ProductCard } from './ProductCard';
 import { Product } from '../../lib/api';
 
 const mockProduct: Product = {
-  id: 'p1',
-  title: 'Test Product',
+  _id: 'p1',
+  name: 'Test Product',
   price: 99.99,
-  image: 'https://via.placeholder.com/150',
+  imageUrl: 'https://via.placeholder.com/150',
   tags: ['Test', 'Mock'],
-  stockQty: 15,
+  stock: 15,
   description: 'A test product description.',
+  category: 'Test'
 };
+
 
 // Mock dependencies
 const mockAddItem = vi.fn();

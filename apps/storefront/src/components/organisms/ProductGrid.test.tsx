@@ -3,17 +3,17 @@ import { describe, it, expect, vi } from 'vitest';
 import { ProductGrid } from './ProductGrid';
 import { Product } from '../../lib/api';
 
-// We mock the ProductCard to isolate the test to the grid itself.
 vi.mock('../molecules/ProductCard', () => ({
   ProductCard: ({ product }: { product: Product }) => (
-    <div data-testid="product-card">{product.title}</div>
+    <div data-testid="product-card">{product.name}</div> // Changed to name
   ),
 }));
 
 const mockProducts: Product[] = [
-  { id: 'p1', title: 'Laptop', price: 1200, image: '', tags: [], stockQty: 10, description: '' },
-  { id: 'p2', title: 'Mouse', price: 50, image: '', tags: [], stockQty: 100, description: '' },
+  { _id: 'p1', name: 'Laptop', price: 1200, imageUrl: '', tags: [], stock: 10, description: '', category: 'Test' },
+  { _id: 'p2', name: 'Mouse', price: 50, imageUrl: '', tags: [], stock: 100, description: '', category: 'Test' },
 ];
+
 
 describe('ProductGrid', () => {
   it('renders a list of products', () => {

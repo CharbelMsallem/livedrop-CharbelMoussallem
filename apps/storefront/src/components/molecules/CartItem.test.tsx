@@ -4,15 +4,17 @@ import { CartItem } from './CartItem';
 import { CartItem as CartItemType } from '../../lib/api';
 
 const mockItem: CartItemType = {
-  id: 'p1',
-  title: 'Test Cart Item',
+  _id: 'p1',
+  name: 'Test Cart Item',
   price: 50.00,
-  image: 'https://via.placeholder.com/150',
+  imageUrl: 'https://via.placeholder.com/150',
   tags: [],
-  stockQty: 10,
+  stock: 10,
   description: '',
   quantity: 2,
+  category: 'Test'
 };
+
 
 // Mock dependencies
 const mockUpdateQuantity = vi.fn();

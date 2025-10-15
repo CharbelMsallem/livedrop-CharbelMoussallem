@@ -87,7 +87,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <p className="text-gray-500">Your cart is empty</p>
             </div>
           ) : (
-            items.map((item) => <CartItem key={item.id} item={item} />)
+            items.map((item) => <CartItem key={item._id} item={item} />)
           )}
         </div>
         

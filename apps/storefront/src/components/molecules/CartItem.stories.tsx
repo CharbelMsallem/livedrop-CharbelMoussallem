@@ -12,14 +12,15 @@ type Story = StoryObj<typeof CartItem>;
 export const Default: Story = {
   args: {
     item: {
-      id: 'p1',
-      title: '13-inch Laptop with M3 Chip',
+      _id: 'p1',
+      name: '13-inch Laptop with M3 Chip',
       price: 1200,
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80',
       quantity: 1,
       tags: [],
-      stockQty: 10,
+      stock: 10,
       description: '',
+      category: 'Electronics',
     },
   },
 };

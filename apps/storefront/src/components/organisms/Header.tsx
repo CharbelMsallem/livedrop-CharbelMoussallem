@@ -1,12 +1,15 @@
 import { Link } from '../../lib/router';
 import { useCartStore } from '../../lib/store';
+import { Customer } from '../../lib/api';
 
 interface HeaderProps {
+  currentUser: Customer;
+  onLogout: () => void;
   onCartOpen: () => void;
   onSupportOpen: () => void;
 }
 
-export function Header({ onCartOpen, onSupportOpen }: HeaderProps) {
+export function Header({ currentUser, onLogout, onCartOpen, onSupportOpen }: HeaderProps) {
   const itemCount = useCartStore((state) => state.getItemCount());
 
   return (
@@ -22,7 +25,15 @@ export function Header({ onCartOpen, onSupportOpen }: HeaderProps) {
             </span>
           </Link>
 
-          <nav className="flex items-center space-x-2">
+          <nav className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-gray-700 hidden sm:block">
+                Hello, {currentUser.name.split(' ')[0]}
+              </span>
+              <button onClick={onLogout} className="px-3 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
+                Logout
+              </button>
+            </div>
             <button onClick={onSupportOpen} className="px-3 py-2 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
               Support
             </button>

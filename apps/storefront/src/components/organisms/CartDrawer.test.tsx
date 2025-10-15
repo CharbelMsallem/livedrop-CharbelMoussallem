@@ -14,7 +14,7 @@ vi.mock('../../lib/router', () => ({
 
 // Mock the CartItem molecule to isolate the test
 vi.mock('../molecules/CartItem', () => ({
-  CartItem: ({ item }: { item: CartItemType }) => <div data-testid="cart-item">{item.title}</div>,
+  CartItem: ({ item }: { item: CartItemType }) => <div data-testid="cart-item">{item.name}</div>,
 }));
 
 // Mock the entire store module

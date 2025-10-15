@@ -1,82 +1,106 @@
+// The base URL of your running backend API
+const API_BASE_URL = 'http://localhost:3000/api';
+
 export interface Product {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  tags: string[];
-  stockQty: number;
+  _id: string;       // Matches MongoDB's default ID field
+  name: string;
   description: string;
+  price: number;
+  category: string;
+  tags: string[];
+  imageUrl: string;
+  stock: number;
 }
 
-export interface OrderStatus {
-  orderId: string;
-  status: 'Placed' | 'Packed' | 'Shipped' | 'Delivered';
+export interface Order {
+  _id: string;
+  customerId: string;
+  status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED';
   carrier?: string;
-  eta?: string;
-  placedAt: number; // Changed to number for timestamp
+  estimatedDelivery?: string;
+  createdAt: string;
+  updatedAt: string;
+  items: { productId: string, name: string, price: number, quantity: number }[];
+  total: number;
+}
+
+export interface Customer {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    createdAt: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
 }
 
-let catalogCache: Product[] | null = null;
-const mockOrders: Record<string, OrderStatus> = {};
-
+// Fetches all products from the backend
 export async function listProducts(): Promise<Product[]> {
-  if (catalogCache) return catalogCache;
-  
-  const response = await fetch('/mock-catalog.json');
-  catalogCache = await response.json();
-  return catalogCache!;
+  const response = await fetch(`${API_BASE_URL}/products?limit=50`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch products');
+  }
+  const data = await response.json();
+  return data.products;
 }
 
+// Fetches a single product by its ID from the backend
 export async function getProduct(id: string): Promise<Product | null> {
-  const products = await listProducts();
-  return products.find(p => p.id === id) || null;
+  const response = await fetch(`${API_BASE_URL}/products/${id}`);
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error('Failed to fetch product');
+  }
+  return response.json();
 }
 
-export function getOrderStatus(id: string): OrderStatus | null {
-  const order = mockOrders[id];
-  if (!order) return null;
-
-  const now = Date.now();
-  const elapsedSeconds = (now - order.placedAt) / 1000;
-
-  let status: OrderStatus['status'] = 'Placed';
-  if (elapsedSeconds > 12) {
-    status = 'Delivered';
-  } else if (elapsedSeconds > 7) {
-    status = 'Shipped';
-  } else if (elapsedSeconds > 3) {
-    status = 'Packed';
-  }
-  
-  const updatedOrder: OrderStatus = { ...order, status };
-
-  if (status === 'Shipped' || status === 'Delivered') {
-    if (!order.carrier) { // Assign carrier only once when it ships
-      updatedOrder.carrier = ['FedEx', 'UPS', 'DHL'][Math.floor(Math.random() * 3)];
-      const deliveryDate = new Date(order.placedAt + 13 * 1000);
-      updatedOrder.eta = deliveryDate.toISOString().split('T')[0];
-    } else {
-      updatedOrder.carrier = order.carrier;
-      updatedOrder.eta = order.eta;
+// Fetches a customer by email
+export async function getCustomerByEmail(email: string): Promise<Customer | null> {
+    const response = await fetch(`${API_BASE_URL}/customers?email=${email}`);
+    if (!response.ok) {
+        if (response.status === 404) return null;
+        throw new Error('Failed to fetch customer');
     }
-  }
-  
-  return updatedOrder;
+    return response.json();
 }
 
-// @ts-ignore - cart is unused for now but required by the spec
-export function placeOrder(cart: CartItem[]): { orderId: string } {
-  const orderId = 'SL' + Math.random().toString(36).substring(2, 12).toUpperCase();
-  
-  mockOrders[orderId] = {
-    orderId,
-    status: 'Placed',
-    placedAt: Date.now(),
-  };
-  
-  return { orderId };
+// Places an order by sending data to the backend
+export async function placeOrder(customerId: string, items: CartItem[], total: number): Promise<Order> {
+    const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId, items, total }),
+    });
+    if (!response.ok) throw new Error('Failed to place order');
+    return await response.json();
+}
+
+// Fetches the status of a single order (for the assistant)
+export async function getOrderStatus(id: string): Promise<Order | null> {
+    const response = await fetch(`${API_BASE_URL}/orders/${id}`);
+    if (!response.ok) {
+        if (response.status === 404) return null;
+        throw new Error('Failed to fetch order status');
+    }
+    return response.json();
+}
+
+// Searches for products (for the assistant)
+export async function searchProducts(query: string): Promise<Product[]> {
+    const response = await fetch(`${API_BASE_URL}/products?search=${encodeURIComponent(query)}&limit=5`);
+    if (!response.ok) throw new Error('Failed to search products');
+    const data = await response.json();
+    return data.products;
+}
+
+// Gets all orders for a customer by their email (for the assistant)
+export async function getCustomerOrders(email: string): Promise<Order[]> {
+    const customer = await getCustomerByEmail(email);
+    if (!customer) return [];
+    const response = await fetch(`${API_BASE_URL}/orders?customerId=${customer._id}`);
+    if (!response.ok) throw new Error('Failed to fetch customer orders');
+    return response.json();
 }
