@@ -1,94 +1,89 @@
-import { create } from 'zustand';
-import type { Product, CartItem } from './api';
+// apps/storefront/src/lib/store.ts
 
-interface CartStore {
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { Product, CartItem, Customer } from './api';
+
+// --- User Store ---
+interface UserState {
+  customer: Customer | null;
+  setCustomer: (customer: Customer | null) => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  customer: null,
+  setCustomer: (customer) => set({ customer }),
+}));
+
+
+// --- Cart Store ---
+interface CartState {
   items: CartItem[];
+  total: number;
+  itemCount: number;
   addItem: (product: Product) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  getTotal: () => number;
-  getItemCount: () => number;
 }
 
-const CART_STORAGE_KEY = 'shoplite-cart';
+const calculateState = (items: CartItem[]) => {
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return { itemCount, total };
+};
 
-function loadCart(): CartItem[] {
-  try {
-    const stored = localStorage.getItem(CART_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
+export const useCartStore = create(
+  persist<CartState>(
+    (set) => ({
+      items: [],
+      total: 0,
+      itemCount: 0,
 
-function saveCart(items: CartItem[]) {
-  try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-  } catch (e) {
-    console.error('Failed to save cart:', e);
-  }
-}
+      addItem: (product) => {
+        set((state) => {
+          const existing = state.items.find((item) => item._id === product._id);
+          let newItems;
+          if (existing) {
+            newItems = state.items.map((item) =>
+              item._id === product._id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            );
+          } else {
+            newItems = [...state.items, { ...product, quantity: 1 }];
+          }
+          return { items: newItems, ...calculateState(newItems) };
+        });
+      },
 
-export const useCartStore = create<CartStore>((set, get) => ({
-  items: loadCart(),
-  
-  addItem: (product) => {
-    set((state) => {
-      const existing = state.items.find((item) => item.id === product.id);
-      let newItems;
-      
-      if (existing) {
-        newItems = state.items.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        newItems = [...state.items, { ...product, quantity: 1 }];
-      }
-      
-      saveCart(newItems);
-      return { items: newItems };
-    });
-  },
-  
-  removeItem: (productId) => {
-    set((state) => {
-      const newItems = state.items.filter((item) => item.id !== productId);
-      saveCart(newItems);
-      return { items: newItems };
-    });
-  },
-  
-  updateQuantity: (productId, quantity) => {
-    set((state) => {
-      if (quantity <= 0) {
-        const newItems = state.items.filter((item) => item.id !== productId);
-        saveCart(newItems);
-        return { items: newItems };
-      }
-      
-      const newItems = state.items.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      );
-      saveCart(newItems);
-      return { items: newItems };
-    });
-  },
-  
-  clearCart: () => {
-    saveCart([]);
-    set({ items: [] });
-  },
-  
-  getTotal: () => {
-    const { items } = get();
-    return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  },
-  
-  getItemCount: () => {
-    const { items } = get();
-    return items.reduce((sum, item) => sum + item.quantity, 0);
-  },
-}));
+      removeItem: (productId) => {
+        set((state) => {
+          const newItems = state.items.filter((item) => item._id !== productId);
+          return { items: newItems, ...calculateState(newItems) };
+        });
+      },
+
+      updateQuantity: (productId, quantity) => {
+        set((state) => {
+          let newItems;
+          if (quantity <= 0) {
+            newItems = state.items.filter((item) => item._id !== productId);
+          } else {
+            newItems = state.items.map((item) =>
+              item._id === productId ? { ...item, quantity } : item
+            );
+          }
+          return { items: newItems, ...calculateState(newItems) };
+        });
+      },
+
+      clearCart: () => {
+        set({ items: [], total: 0, itemCount: 0 });
+      },
+    }),
+    {
+      name: 'shoplite-cart-storage', // name of the item in the storage (must be unique)
+    }
+  )
+);

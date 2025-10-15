@@ -1,7 +1,9 @@
+// apps/storefront/src/components/molecules/UserLogin.tsx
+
 import { useState } from 'react';
-import { Input } from './atoms/Input';
-import { Button } from './atoms/Button';
-import { getCustomerByEmail, Customer } from '../lib/api';
+import { Input } from '../atoms/Input'; 
+import { Button } from '../atoms/Button'; 
+import { getCustomerByEmail, Customer } from '../../lib/api'; 
 
 interface UserLoginProps {
     onLoginSuccess: (customer: Customer) => void;

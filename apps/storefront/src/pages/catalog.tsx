@@ -1,3 +1,5 @@
+// apps/storefront/src/pages/catalog.tsx
+
 import { useState, useEffect, useMemo } from 'react';
 import { listProducts, Product } from '../lib/api';
 import { SearchBar } from '../components/molecules/SearchBar';
@@ -16,28 +18,33 @@ export function CatalogPage() {
 
   async function loadProducts() {
     try {
+      // The listProducts function now guarantees to return an array.
       const data = await listProducts();
       setProducts(data);
     } catch (error) {
       console.error('Failed to load products:', error);
+      // In case of an error, ensure products is an empty array
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   }
 
+  // This calculation is now safe because 'products' is always an array.
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     products.forEach(p => p.tags.forEach(t => tags.add(t)));
     return Array.from(tags).sort();
   }, [products]);
 
+  // This calculation is also safe.
   const filteredProducts = useMemo(() => {
-    let filtered = products;
+    let filtered = [...products]; // Create a copy to sort
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(p =>
-        p.title.toLowerCase().includes(query) ||
+        p.name.toLowerCase().includes(query) ||
         p.tags.some(t => t.toLowerCase().includes(query))
       );
     }
@@ -46,16 +53,15 @@ export function CatalogPage() {
       filtered = filtered.filter(p => p.tags.includes(selectedTag));
     }
 
-    const sorted = [...filtered];
     if (sortBy === 'price-asc') {
-      sorted.sort((a, b) => a.price - b.price);
+      filtered.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-desc') {
-      sorted.sort((a, b) => b.price - a.price);
+      filtered.sort((a, b) => b.price - a.price);
     } else {
-      sorted.sort((a, b) => a.title.localeCompare(b.title));
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    return sorted;
+    return filtered;
   }, [products, searchQuery, sortBy, selectedTag]);
 
   if (loading) {

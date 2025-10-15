@@ -1,3 +1,5 @@
+// apps/storefront/src/pages/product.tsx
+
 import { useState, useEffect } from 'react';
 import { useRouter } from '../lib/router';
 import { getProduct, listProducts, Product } from '../lib/api';
@@ -30,7 +32,7 @@ export function ProductPage() {
       if (data) {
         const allProducts = await listProducts();
         const related = allProducts
-          .filter(p => p.id !== data.id && p.tags.some(t => data.tags.includes(t)))
+          .filter(p => p._id !== data._id && p.tags.some(t => data.tags.includes(t)))
           .slice(0, 3); // Changed to slice 3 related items
         setRelatedProducts(related);
       }
@@ -63,8 +65,8 @@ export function ProductPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 sm:mb-10">
         <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden md:sticky top-20 h-fit">
           <img
-            src={product.image}
-            alt={product.title}
+            src={product.imageUrl}
+            alt={product.name}
             className="w-full h-full object-cover"
           />
         </div>
@@ -76,14 +78,14 @@ export function ProductPage() {
             ))}
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{product.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
 
           <div className="flex items-baseline gap-2 mb-4">
             <p className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               {formatCurrency(product.price)}
             </p>
-            {product.stockQty < 20 && (
-              <Badge variant="warning">Only {product.stockQty} left!</Badge>
+            {product.stock < 20 && (
+              <Badge variant="warning">Only {product.stock} left!</Badge>
             )}
           </div>
 
@@ -95,7 +97,7 @@ export function ProductPage() {
             <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-gray-700 font-medium text-xs">{product.stockQty} in stock & ready to ship</span>
+            <span className="text-gray-700 font-medium text-xs">{product.stock} in stock & ready to ship</span>
           </div>
 
           <Button
@@ -132,10 +134,9 @@ export function ProductPage() {
       {relatedProducts.length > 0 && (
         <div className="border-t pt-8 sm:pt-10">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5">You Might Also Like</h2>
-          {/* Updated grid layout for 3 items */}
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {relatedProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p._id} product={p} />
             ))}
           </div>
         </div>

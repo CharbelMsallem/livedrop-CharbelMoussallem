@@ -1,15 +1,14 @@
 import express from 'express';
 import { getDb } from '../db.js';
-import { ObjectId } from 'mongodb'; // Import ObjectId for the new POST route
+import { ObjectId } from 'mongodb';
 
 const router = express.Router();
 
 // GET /api/products - Get all products with filtering/sorting
 router.get('/', async (req, res) => {
-  // ... (existing GET all products code remains unchanged)
   try {
     const db = getDb();
-    const { search, tag, sort } = req.query;
+    const { search, tag, sort, limit = 50 } = req.query;
 
     let query = {};
     if (search) {
@@ -31,9 +30,10 @@ router.get('/', async (req, res) => {
     const products = await db.collection('products')
       .find(query)
       .sort(sortOption)
+      .limit(parseInt(limit))
       .toArray();
 
-    res.status(200).json(products);
+    res.status(200).json({ products }); // Wrap in a 'products' object
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({ error: "An internal server error occurred" });
@@ -42,7 +42,6 @@ router.get('/', async (req, res) => {
 
 // GET /api/products/:id - Get a single product
 router.get('/:id', async (req, res) => {
-  // ... (existing GET single product code remains unchanged)
   try {
     const db = getDb();
     const { id } = req.params;

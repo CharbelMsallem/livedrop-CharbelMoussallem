@@ -1,3 +1,5 @@
+// apps/api/src/routes/customers.js
+
 import express from 'express';
 import { getDb } from '../db.js';
 import { ObjectId } from 'mongodb';
@@ -13,12 +15,18 @@ router.get('/', async (req, res) => {
     }
 
     const db = getDb();
-    const customer = await db.collection('customers').findOne({ email });
+    // No change needed here, findOne is correct
+    const customer = await db.collection('customers').findOne({ email }); 
 
     if (!customer) {
+      // It's better to return an empty array or a specific not-found response
+      // For this logic, the frontend handles null, so 404 is correct.
       return res.status(404).json({ error: "Customer not found" });
     }
 
+    // The KEY FIX: Send the customer object directly, NOT in an array.
+    // The previous frontend code was expecting data[0], which works for arrays.
+    // The most recent api.ts expects a single object, so we send that.
     res.status(200).json(customer);
   } catch (error) {
     console.error("Error fetching customer by email:", error);
