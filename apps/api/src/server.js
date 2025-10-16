@@ -10,6 +10,7 @@ import customerRoutes from './routes/customers.js';
 import orderRoutes from './routes/orders.js';
 import analyticsRoutes from './routes/analytics.js';
 import orderStatusRoutes from './sse/order-status.js'; 
+import assistantRoutes from './routes/assistant.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -39,6 +40,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/orders/status', orderStatusRoutes); 
+app.use('/api/assistant', assistantRoutes);
 
 // --- Server Startup ---
 async function startServer() {

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "Account1.1",
+    "question": "How do I log in to my account?",
+    "answer": "You can access your account by entering your email address on the login screen. No password is required. A pre-seeded account is available using 'demo@example.com' for testing purposes.",
+    "category": "Account",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Orders2.1",
+    "question": "How can I check my order status?",
+    "answer": "You can check your order status on the Order Status page, which provides live updates. Your order will go through 'PENDING', 'PROCESSING', 'SHIPPED', and finally 'DELIVERED' stages.",
+    "category": "Orders",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Shipping3.1",
+    "question": "How much does shipping cost?",
+    "answer": "A flat shipping fee of $5.99 is applied to all orders during checkout.",
+    "category": "Shipping",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Returns4.1",
+    "question": "What is your return policy?",
+    "answer": "We offer a 30-day return policy for most items. This is highlighted on our product detail pages.",
+    "category": "Returns",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Payment5.1",
+    "question": "How are taxes calculated for my order?",
+    "answer": "A tax rate of 8% is applied to the subtotal of your order during the checkout process.",
+    "category": "Payment",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Products6.1",
+    "question": "How can I search for products?",
+    "answer": "You can use the search bar on the catalog page to find products by name or tag. You can also sort products by name or price and filter by clicking on the product tags.",
+    "category": "Products",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Support7.1",
+    "question": "What can the support assistant help me with?",
+    "answer": "I can answer questions about store policies, help you track an order if you provide the ID, and assist with product searches. If you need more help, there is an option to 'Chat with a Human Agent'.",
+    "category": "Support",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Orders8.1",
+    "question": "How can I see my past orders?",
+    "answer": "After logging in with your email, you can navigate to your Profile page to view your complete order history, including the items purchased and their current status.",
+    "category": "Orders",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Shipping9.1",
+    "question": "Which carriers do you use for shipping?",
+    "answer": "Once an order is marked as SHIPPED, a carrier such as FedEx, UPS, or DHL will be assigned. This information is available on the live order tracking page.",
+    "category": "Shipping",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Security10.1",
+    "question": "Is my payment information secure?",
+    "answer": "Yes, we prioritize secure payments for all transactions. Our product pages highlight this as one of our key guarantees to customers.",
+    "category": "Security",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Shipping11.1",
+    "question": "Do you offer free shipping?",
+    "answer": "While our standard shipping fee is $5.99, free shipping is automatically applied on orders over $50.",
+    "category": "Shipping",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Products12.1",
+    "question": "What does the 'Low Stock' badge mean?",
+    "answer": "You will see a 'Low Stock' badge on products that have fewer than 10 items remaining in our inventory. This helps you know when a popular item might sell out soon.",
+    "category": "Products",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Cart13.1",
+    "question": "How do I change the quantity of an item in my cart?",
+    "answer": "In the cart view, you can change the quantity of any item using the number input field next to it. Setting the quantity to 0 will remove the item from your cart.",
+    "category": "Cart",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Products14.1",
+    "question": "What kinds of products do you sell?",
+    "answer": "We offer a wide range of products across categories including Electronics, Accessories, Health & Fitness, Fashion, Home Decor, and Kitchen goods.",
+    "category": "Products",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  },
+  {
+    "id": "Account15.1",
+    "question": "Is it secure to log in with only an email?",
+    "answer": "Our system is designed for simplicity and demonstration. For this version, we use a passwordless email lookup. In a production environment, we would implement a full authentication system with passwords and other security measures.",
+    "category": "Account",
+    "lastUpdated": "2025-10-16T00:00:00Z"
+  }
+]

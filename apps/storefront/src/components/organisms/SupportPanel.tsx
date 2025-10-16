@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+// apps/storefront/src/components/organisms/SupportPanel.tsx
+
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '../atoms/Button';
 import { Input } from '../atoms/Input';
-import { processQuery } from '../../assistant/engine';
+import { processQuery, ChatMessage } from '../../assistant/engine';
+import { useUserStore } from '../../lib/store';
 
 interface SupportPanelProps {
   isOpen: boolean;
@@ -17,47 +20,44 @@ const suggestedQuestions = [
 
 export function SupportPanel({ isOpen, onClose }: SupportPanelProps) {
   const [query, setQuery] = useState('');
-  const [response, setResponse] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState('');
+  const { customer } = useUserStore();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Generate a unique session ID when the panel is opened
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      setSessionId(`session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
+      setMessages([]); // Clear previous conversation
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isOpen]);
 
+  // Auto-scroll to the latest message
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleEscape);
-      return () => window.removeEventListener('keydown', handleEscape);
-    }
-  }, [isOpen, onClose]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    if (!query.trim() || !customer) return;
 
+    const userMessage: ChatMessage = { role: 'user', content: query };
+    setMessages(prev => [...prev, userMessage]);
+    setQuery('');
     setLoading(true);
+
     try {
-      const result = await processQuery(query);
-      setResponse(result);
+      const response = await processQuery(query, sessionId, customer.email);
+      const assistantMessage: ChatMessage = { role: 'assistant', content: response };
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      setResponse('Sorry, something went wrong. Please try again.');
+      const errorMessage: ChatMessage = { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSuggestionClick = (question: string) => {
-    setQuery(question);
   };
 
   if (!isOpen) return null;
@@ -75,82 +75,73 @@ export function SupportPanel({ isOpen, onClose }: SupportPanelProps) {
         aria-modal="true"
         aria-labelledby="support-title"
       >
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-primary to-secondary">
-          <h2 id="support-title" className="text-xl sm:text-2xl font-bold text-white">Ask Support</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
-            aria-label="Close support panel"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b bg-gradient-to-r from-primary to-secondary text-white">
+          <h2 id="support-title" className="text-lg font-bold">Nio - Support Assistant</h2>
+          <button onClick={onClose} className="p-1 hover:bg-white/10 rounded-full" aria-label="Close">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="mb-6 p-4 bg-teal-50 rounded-lg border border-teal-200">
-            <p className="text-xs text-teal-900">
-              Ask me about our policies, order status, returns, shipping, and more. Also, you can include your order ID for tracking queries ex: [Order #............]
-            </p>
-          </div>
-
-          {response && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs font-semibold text-gray-700 mb-2">Response:</p>
-              <div className="prose prose-sm max-w-none text-gray-900">
-                {response.split(/(\[Q\d+\]|\[Order Status\])/).map((part, i) => {
-                  if (part.match(/\[Q\d+\]|\[Order Status\]/)) {
-                    return (
-                      <span key={i} className="inline-flex items-center px-2 py-0.5 rounded bg-teal-100 text-primary text-xs font-semibold ml-1">
-                        {part}
-                      </span>
-                    );
-                  }
-                  return <span key={i}>{part}</span>;
-                })}
+        {/* Message Display Area */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-xs md:max-w-md p-3 rounded-2xl ${msg.role === 'user' ? 'bg-primary text-white rounded-br-lg' : 'bg-gray-100 text-gray-800 rounded-bl-lg'}`}>
+                <p className="text-sm">{msg.content}</p>
               </div>
             </div>
-          )}
-
-          <div className="mb-6">
-            <p className="text-xs font-semibold text-gray-600 mb-2">Some things you can ask:</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestedQuestions.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => handleSuggestionClick(q)}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs font-semibold transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
+          ))}
+          {loading && (
+             <div className="flex justify-start">
+                <div className="max-w-xs md:max-w-md p-3 rounded-2xl bg-gray-100 text-gray-800 rounded-bl-lg">
+                    <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                        <span className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                        <span className="h-2 w-2 bg-primary rounded-full animate-bounce"></span>
+                    </div>
+                </div>
             </div>
-          </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Suggested Questions & Input Form */}
+        <div className="p-4 sm:p-6 border-t bg-gray-50">
+           {messages.length === 0 && (
+             <div className="mb-4">
+                <p className="text-xs font-semibold text-gray-600 mb-2">Some things you can ask:</p>
+                <div className="flex flex-wrap gap-2">
+                  {suggestedQuestions.map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => setQuery(q)}
+                      className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 rounded-full text-xs font-semibold transition-colors"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+           )}
+          <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Type your question here..."
+              placeholder="Type your question..."
               disabled={loading}
-              aria-label="Support question"
+              className="flex-1"
+              aria-label="Support question input"
             />
             <Button
               type="submit"
               disabled={loading || !query.trim()}
-              className="w-full"
+              className="!rounded-full w-12 h-12 flex items-center justify-center"
+              aria-label="Send message"
             >
-              {loading ? 'Processing...' : 'Submit Question'}
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
             </Button>
           </form>
-
-          <div className="mt-6 pt-6 border-t">
-            <p className="text-xs text-gray-600 mb-2">Need more help?</p>
-            <Button variant="outline" className="w-full" size="sm">
-              Chat with a Human Agent
-            </Button>
-          </div>
         </div>
       </div>
     </>
