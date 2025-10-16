@@ -1,5 +1,3 @@
-// apps/storefront/src/lib/api.ts
-
 // The base URL of your running backend API
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -23,7 +21,9 @@ export interface Order {
   estimatedDelivery?: string;
   createdAt: string;
   updatedAt: string;
-  items: { productId: string, name: string, price: number, quantity: number }[];
+  items: {
+      imageUrl: string | undefined; productId: string, name: string, price: number, quantity: number 
+}[];
   total: number;
 }
 

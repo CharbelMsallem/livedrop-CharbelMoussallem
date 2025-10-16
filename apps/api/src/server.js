@@ -9,30 +9,25 @@ import productRoutes from './routes/products.js';
 import customerRoutes from './routes/customers.js';
 import orderRoutes from './routes/orders.js';
 import analyticsRoutes from './routes/analytics.js';
+import orderStatusRoutes from './sse/order-status.js'; 
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // --- Middleware ---
 
-// This is the crucial part.
-// We're creating a list of trusted origins.
 const allowedOrigins = [
-  'http://localhost:5173', // Your frontend development server
-  // Add your deployed frontend URL here when you have it
-  // e.g., 'https://your-frontend-app.vercel.app'
+  'http://localhost:5173',
+  // Add your deployed frontend URL here
 ];
 
-// Configure CORS to only allow requests from your frontend
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-    return callback(null, true);
   }
 }));
 
@@ -43,6 +38,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/orders/status', orderStatusRoutes); 
 
 // --- Server Startup ---
 async function startServer() {

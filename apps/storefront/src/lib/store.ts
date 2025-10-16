@@ -10,10 +10,17 @@ interface UserState {
   setCustomer: (customer: Customer | null) => void;
 }
 
-export const useUserStore = create<UserState>((set) => ({
-  customer: null,
-  setCustomer: (customer) => set({ customer }),
-}));
+export const useUserStore = create(
+  persist<UserState>(
+    (set) => ({
+      customer: null,
+      setCustomer: (customer) => set({ customer }),
+    }),
+    {
+      name: 'shoplite-user-storage', // name of the item in the storage (must be unique)
+    }
+  )
+);
 
 
 // --- Cart Store ---
