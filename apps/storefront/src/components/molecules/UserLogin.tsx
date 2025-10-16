@@ -25,7 +25,7 @@ export function UserLogin({ onLoginSuccess }: UserLoginProps) {
       if (customer) {
         onLoginSuccess(customer);
       } else {
-        setError('No customer found with that email. (Try demo@gmail.com)');
+        setError('No customer found with that email. (Try demo@example.com)');
       }
     } catch (err) {
       setError('Failed to connect to the server. Please try again.');
@@ -42,7 +42,7 @@ export function UserLogin({ onLoginSuccess }: UserLoginProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             type="email"
-            placeholder="you@email.com"
+            placeholder="demo@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}

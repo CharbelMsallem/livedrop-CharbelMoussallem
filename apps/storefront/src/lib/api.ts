@@ -140,8 +140,9 @@ export async function getCustomerOrders(email: string): Promise<Order[]> {
       console.error('API Error fetching customer orders:', response.status, response.statusText);
       return [];
     }
-    const data = await response.json();
-    return data.orders || []; // Assuming the API returns { orders: [...] }
+    // ** THIS IS THE FIX **
+    // The API returns the array directly, so we just return the parsed JSON.
+    return await response.json();
   } catch (error) {
     console.error('Failed to fetch customer orders:', error);
     return [];

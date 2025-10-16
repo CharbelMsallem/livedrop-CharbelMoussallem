@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { useUserStore } from './lib/store';
 import { Header } from './components/organisms/Header';
 import { SupportPanel } from './components/organisms/SupportPanel';
-import { Router, Route, Routes } from './lib/router'; 
+import { Router, Route, Routes } from './lib/router';
 import { CatalogPage } from './pages/catalog';
 import { ProductPage } from './pages/product';
 import { CartPage } from './pages/cart';
 import { CheckoutPage } from './pages/checkout';
 import { OrderStatusPage } from './pages/order-status';
 import { UserLogin } from './components/molecules/UserLogin';
+import { ProfilePage } from './pages/ProfilePage'; // Import the new ProfilePage
 
 export function App() {
   const { customer, setCustomer } = useUserStore();
@@ -32,6 +33,7 @@ export function App() {
             <Route path="/cart" component={CartPage} />
             <Route path="/checkout" component={CheckoutPage} />
             <Route path="/order-status" component={OrderStatusPage} />
+            <Route path="/profile" component={ProfilePage} /> 
           </Routes>
         </main>
         <SupportPanel

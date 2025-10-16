@@ -1,3 +1,5 @@
+// apps/api/src/routes/orders.js
+
 import express from 'express';
 import { getDb } from '../db.js';
 import { ObjectId } from 'mongodb';
@@ -47,6 +49,14 @@ router.post('/', async (req, res) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    // Reduce stock for each item in the order
+    for (const item of items) {
+      await db.collection('products').updateOne(
+        { _id: item._id },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
 
     const result = await db.collection('orders').insertOne(newOrder);
     const createdOrder = await db.collection('orders').findOne({ _id: result.insertedId });
