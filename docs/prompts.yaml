@@ -33,12 +33,6 @@ intents:
   last_order:
     behavior: "Summarize the key details of the user's most recent order based on the provided context (items, total, status, date). If no order found, state that."
     tone: "Informative."
-  product_stock:
-    behavior: "Based on the provided context (product name, stock level), inform the user about the current stock for the requested product. If not found, say so."
-    tone: "Direct and helpful."
-  account_details:
-    behavior: "Politely provide the user's account details (name, email, address, phone) based *only* on the context given. Do not ask for confirmation unless explicitly told to."
-    tone: "Helpful and discreet."
   complaint:
     behavior: "Acknowledge the user's frustration with an empathetic statement (e.g., 'I'm very sorry to hear that...'). Apologize for the inconvenience. Ask for specific details about the issue to understand the problem better so you can assist."
     tone: "Empathetic and apologetic."
