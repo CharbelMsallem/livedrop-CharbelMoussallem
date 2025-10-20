@@ -6,7 +6,7 @@ const intentKeywords = {
   order_count: ['how many orders', 'number of my orders', 'my total orders', 'count my orders'],
   product_search: ['search for', 'find', 'do you have', 'looking for', 'product', 'item', 'buy', 'shop for', 'price of', 'cost of', 'how much is'],
   product_count: ['how many products', 'total products', 'count products', 'number of items'],
-  total_spendings: ['how much have i spent', 'how much did i spend', 'total spent', 'my spending', 'expenditure'],
+  total_spendings: ['how much have i spent', 'how much did i spend', 'total spent', 'my spending', 'expenditure', 'total spending'],
   last_order: ['my last order', 'previous order', 'most recent purchase', 'what did i buy last'],
   complaint: ['issue', 'problem', 'complaint', 'wrong', 'broken', 'not working', 'unhappy', 'disappointed', 'frustrated'],
   chitchat: ['hello', 'hi', 'hey', 'thanks', 'thank you', 'bye', 'goodbye', 'how are you', 'your name'],
@@ -27,6 +27,11 @@ export function classifyIntent(query) {
 
   if (intentKeywords.violation.some(keyword => lowerQuery.includes(keyword))) {
     return { intent: 'violation', extractedOrderId: null };
+  }
+
+  // --- High-priority check for unambiguous policy terms ---
+  if (['return', 'refund', 'shipping policy'].some(keyword => lowerQuery.includes(keyword))) {
+    return { intent: 'policy_question', extractedOrderId: null };
   }
 
   // --- Check for specific, high-priority intents first ---
@@ -77,6 +82,14 @@ export function classifyIntent(query) {
   if (intentKeywords.chitchat.some(keyword => lowerQuery.includes(keyword))) {
     return { intent: 'chitchat', extractedOrderId: null };
   }
+  
+  // --- FINAL HEURISTIC: Assume short, unrecognized queries are product searches ---
+  // If no other intent has been matched, and the query is reasonably short,
+  // treat it as a direct search for a product. This handles follow-ups like "4k ultra hd smart tv".
+  if (lowerQuery.split(' ').length <= 6) {
+    return { intent: 'product_search', extractedOrderId: null, searchTerm: lowerQuery };
+  }
+
 
   return { intent: 'off_topic', extractedOrderId: null };
 }

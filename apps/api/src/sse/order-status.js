@@ -4,7 +4,8 @@ import { ObjectId } from 'mongodb';
 
 const router = express.Router();
 
-const clients = {};
+
+export const clients = {};
 const activeSimulations = new Set(); // Use a Set to track active simulations
 
 router.get('/:id/stream', async (req, res) => {
@@ -20,7 +21,7 @@ router.get('/:id/stream', async (req, res) => {
 
     const clientId = Date.now();
     clients[clientId] = { res, orderId: id };
-    console.log(`Client ${clientId} connected for order ${id}`);
+    console.log(`SSE Client ${clientId} connected for order ${id}. Total clients: ${Object.keys(clients).length}`);
 
     const sendEvent = (data) => {
         if (clients[clientId]) {
@@ -46,13 +47,12 @@ router.get('/:id/stream', async (req, res) => {
     }
 
     req.on('close', () => {
-        console.log(`Client ${clientId} disconnected`);
+        console.log(`SSE Client ${clientId} disconnected for order ${id}.`);
         delete clients[clientId];
+        console.log(`Total SSE clients remaining: ${Object.keys(clients).length}`);
 
         const isStillActive = Object.values(clients).some(c => c.orderId === id);
         if (!isStillActive) {
-            // No more clients for this order, but we don't stop the simulation.
-            // The simulation will run to completion regardless of client connections.
             console.log(`No more clients for order ${id}. Simulation will continue on backend.`);
         }
         res.end();

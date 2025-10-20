@@ -114,7 +114,7 @@ function findRelevantPolicies(query) {
   }
 
   if (matchedCategory) {
-    return knowledgeBase.filter(doc => doc.category.toLowerCase() === category.toLowerCase());
+    return knowledgeBase.filter(doc => doc.category.toLowerCase() === matchedCategory.toLowerCase());
   }
   return [];
 }

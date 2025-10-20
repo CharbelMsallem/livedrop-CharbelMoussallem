@@ -1,6 +1,8 @@
 // apps/api/src/routes/dashboard.js
 import express from 'express';
 import { getDb } from '../db.js';
+import { clients as sseClients } from '../sse/order-status.js';
+import { getPerformanceStats } from '../server.js'; 
 
 const router = express.Router();
 
@@ -88,15 +90,12 @@ router.get('/assistant-stats', async (req, res) => {
             { $project: { _id: 0, intent: '$_id', avgResponseTime: 1 } }
         ];
 
-        const [intentDistribution, functionCalls, avgTimings] = await Promise.all([
+        const [intentDistribution, functionCalls, avgTimings, totalQueries] = await Promise.all([
             logsCollection.aggregate(intentPipeline).toArray(),
             logsCollection.aggregate(functionCallPipeline).toArray(),
             logsCollection.aggregate(timingPipeline).toArray(),
             logsCollection.countDocuments() // Total queries
         ]);
-
-        const totalQueries = await logsCollection.countDocuments();
-
 
         res.status(200).json({
             totalQueries,
@@ -112,18 +111,64 @@ router.get('/assistant-stats', async (req, res) => {
 });
 
 
-// --- System Health & Performance (Mocked/Simple for now) ---
+// --- System Health & Performance (Using Live Data) ---
 // GET /api/dashboard/performance
 router.get('/performance', async (req, res) => {
-    // In a real app, this data would come from a monitoring service, logs, or in-memory counters.
-    // For this assignment, we will provide some realistic mocked data.
-    res.status(200).json({
-        avgApiLatency: Math.floor(Math.random() * (80 - 40 + 1)) + 40, // Random ms between 40-80ms
-        sseConnections: Math.floor(Math.random() * 10), // Random number of active SSE connections
-        failedRequests: Math.floor(Math.random() * 5), // Random small number of failed requests
-        dbConnection: "ok", // simple status
-        llmService: "ok"
-    });
+    try {
+        const db = getDb();
+        const performanceStats = getPerformanceStats(); // Get current stats from server.js
+        const sseConnectionCount = Object.keys(sseClients).length; // Get live SSE client count
+
+        // Check DB connection status (simple ping)
+        let dbStatus = "ok";
+        try {
+            await db.admin().ping();
+        } catch (dbError) {
+            console.error("Dashboard DB connection check failed:", dbError);
+            dbStatus = "error";
+        }
+
+        // Check LLM service status (simple fetch to /health)
+        let llmStatus = "error"; // Default to error
+        const llmBaseUrl = process.env.LLM_GENERATE_URL;
+        if (llmBaseUrl) {
+           // Construct the health URL. Assumes /generate might be part of the path.
+           const healthUrl = llmBaseUrl.includes('/generate')
+             ? llmBaseUrl.replace('/generate', '/health')
+             : `${llmBaseUrl.replace(/\/$/, '')}/health`; // Or just append /health if not present
+
+           try {
+              // Use a short timeout to avoid long waits
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 3000);
+              const response = await fetch(healthUrl, { method: 'GET', signal: controller.signal });
+              clearTimeout(timeoutId);
+
+              if (response.ok) {
+                 llmStatus = "ok";
+              } else {
+                 console.warn(`LLM health check failed with status: ${response.status}`);
+              }
+           } catch (fetchError) {
+              console.error("LLM health check fetch error:", fetchError.message);
+           }
+        } else {
+           console.warn("LLM_GENERATE_URL not set, cannot check LLM status.");
+           llmStatus = "unknown";
+        }
+
+        res.status(200).json({
+            avgApiLatency: performanceStats.avgApiLatency,
+            sseConnections: sseConnectionCount,
+            failedRequests: performanceStats.failedRequests,
+            dbConnection: dbStatus,
+            llmService: llmStatus
+        });
+
+    } catch (error) {
+        console.error('Error fetching performance metrics:', error);
+        res.status(500).json({ error: 'Failed to fetch performance metrics' });
+    }
 });
 
 
