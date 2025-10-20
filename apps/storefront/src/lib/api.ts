@@ -40,6 +40,28 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
+export interface BusinessMetrics {
+    totalRevenue: number;
+    totalOrders: number;
+    avgOrderValue: number;
+    ordersByStatus: { status: string; count: number }[];
+}
+
+export interface AssistantStats {
+    totalQueries: number;
+    intentDistribution: { intent: string; count: number }[];
+    functionCalls: { functionName: string; count: number }[];
+    avgTimings: { intent: string; avgResponseTime: number }[];
+}
+
+export interface PerformanceMetrics {
+    avgApiLatency: number;
+    sseConnections: number;
+    failedRequests: number;
+    dbConnection: string;
+    llmService: string;
+}
+
 /**
  * Fetches all products from the backend.
  * This function is now guaranteed to always return an array.
@@ -147,4 +169,22 @@ export async function getCustomerOrders(email: string): Promise<Order[]> {
     console.error('Failed to fetch customer orders:', error);
     return [];
   }
+}
+
+export async function getBusinessMetrics(): Promise<BusinessMetrics> {
+    const response = await fetch(`${API_BASE_URL}/dashboard/business-metrics`);
+    if (!response.ok) throw new Error('Failed to fetch business metrics');
+    return response.json();
+}
+
+export async function getAssistantStats(): Promise<AssistantStats> {
+    const response = await fetch(`${API_BASE_URL}/dashboard/assistant-stats`);
+    if (!response.ok) throw new Error('Failed to fetch assistant stats');
+    return response.json();
+}
+
+export async function getPerformanceMetrics(): Promise<PerformanceMetrics> {
+    const response = await fetch(`${API_BASE_URL}/dashboard/performance`);
+    if (!response.ok) throw new Error('Failed to fetch performance metrics');
+    return response.json();
 }

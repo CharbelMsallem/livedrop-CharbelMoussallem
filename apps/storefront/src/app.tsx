@@ -12,6 +12,7 @@ import { CheckoutPage } from './pages/checkout';
 import { OrderStatusPage } from './pages/order-status';
 import { UserLogin } from './components/molecules/UserLogin';
 import { ProfilePage } from './pages/ProfilePage';
+// import { AdminDashboard } from './pages/AdminDashboard';
 
 // Component to handle global session effects
 function SessionManager() {
@@ -85,6 +86,7 @@ export function App() {
             <Route path="/checkout" component={CheckoutPage} />
             <Route path="/order-status" component={OrderStatusPage} />
             <Route path="/profile" component={ProfilePage} />
+            {/* <Route path="/admin" component={AdminDashboardPage} /> */}
           </Routes>
         </main>
         <SupportPanel
