@@ -12,7 +12,7 @@ import { CheckoutPage } from './pages/checkout';
 import { OrderStatusPage } from './pages/order-status';
 import { UserLogin } from './components/molecules/UserLogin';
 import { ProfilePage } from './pages/ProfilePage';
-// import { AdminDashboard } from './pages/AdminDashboard';
+import { AdminDashboardPage } from './pages/AdminDashboard';
 
 // Component to handle global session effects
 function SessionManager() {
@@ -75,7 +75,7 @@ export function App() {
 
   return (
     <Router>
-       <SessionManager /> {/* Add the session manager */}
+       <SessionManager /> 
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Header onSupportOpen={() => setSupportOpen(true)} />
         <main className="flex-1">
@@ -86,7 +86,7 @@ export function App() {
             <Route path="/checkout" component={CheckoutPage} />
             <Route path="/order-status" component={OrderStatusPage} />
             <Route path="/profile" component={ProfilePage} />
-            {/* <Route path="/admin" component={AdminDashboardPage} /> */}
+            <Route path="/admin" component={AdminDashboardPage} />
           </Routes>
         </main>
         <SupportPanel

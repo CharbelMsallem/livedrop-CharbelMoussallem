@@ -15,7 +15,7 @@ let promptsConfig;
 let knowledgeBase = [];
 
 try {
-  const promptsFilePath = path.join(__dirname, '../../../docs/prompts.yaml');
+  const promptsFilePath = path.join(__dirname, '../../../../docs/prompts.yaml');
   promptsConfig = yaml.load(fs.readFileSync(promptsFilePath, 'utf8'));
   console.log("Prompts configuration loaded successfully.");
 } catch (e) {
@@ -24,7 +24,7 @@ try {
 }
 
 try {
-  const kbFilePath = path.join(__dirname, '../../../docs/ground-truth.json');
+  const kbFilePath = path.join(__dirname, '../../../../docs/ground-truth.json');
   knowledgeBase = JSON.parse(fs.readFileSync(kbFilePath, 'utf8'));
   console.log(`Knowledge base loaded successfully with ${knowledgeBase.length} policies.`);
 } catch (e) {

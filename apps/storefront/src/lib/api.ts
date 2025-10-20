@@ -62,6 +62,12 @@ export interface PerformanceMetrics {
     llmService: string;
 }
 
+export interface DailyRevenue {
+    date: string;
+    revenue: number;
+    orderCount: number;
+}
+
 /**
  * Fetches all products from the backend.
  * This function is now guaranteed to always return an array.
@@ -186,5 +192,11 @@ export async function getAssistantStats(): Promise<AssistantStats> {
 export async function getPerformanceMetrics(): Promise<PerformanceMetrics> {
     const response = await fetch(`${API_BASE_URL}/dashboard/performance`);
     if (!response.ok) throw new Error('Failed to fetch performance metrics');
+    return response.json();
+}
+
+export async function getDailyRevenue(from: string, to: string): Promise<DailyRevenue[]> {
+    const response = await fetch(`${API_BASE_URL}/analytics/daily-revenue?from=${from}&to=${to}`);
+    if (!response.ok) throw new Error('Failed to fetch daily revenue');
     return response.json();
 }
