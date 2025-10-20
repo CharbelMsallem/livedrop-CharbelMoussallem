@@ -1,4 +1,3 @@
-// apps/storefront/src/components/organisms/SupportPanel.tsx
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '../atoms/Button';
