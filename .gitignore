@@ -1,6 +1,6 @@
 # Environment variables (NEVER commit secrets)
 .env
-.env.local
+.env.test
 
 # Root-level dependencies
 /node_modules
