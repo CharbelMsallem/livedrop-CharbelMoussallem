@@ -385,7 +385,7 @@ export async function runAssistant(query, userEmail, sessionId) {
           break;
 
         case 'complaint':
-          context = `Customer Concern:\nThe customer has expressed dissatisfaction or reported an issue.\nApproach: Show empathy, apologize for inconvenience, ask for specific details to help resolve.`;
+          context = `Customer Concern:\nThe customer has expressed dissatisfaction or reported an issue.\nApproach: Show empathy, apologize for inconvenience, ask for specific details to help resolve the issue.`;
           break;
       }
 
@@ -436,6 +436,16 @@ export async function runAssistant(query, userEmail, sessionId) {
     }
 
     console.log(`[Assistant] Processed in ${processingTime}ms. Intent: ${intentResult.intent}`);
+    
+    // --- START: ADDED LOGGING ---
+    console.log('Return:', {
+        text: responseText.substring(0, 75) + (responseText.length > 75 ? '...' : ''), // Truncate text for a clean log
+        intent: intentResult.intent,
+        citations: citations,
+        functionsCalled: functionsCalled
+    });
+    // --- END: ADDED LOGGING ---
+
     return result;
 
   } catch (error) {
@@ -458,6 +468,15 @@ export async function runAssistant(query, userEmail, sessionId) {
         error: error.message,
         processingTime: errorResponse.processingTime,
     });
+    
+    // --- START: ADDED ERROR LOGGING  ---
+    console.log('Return (Error):', {
+        text: errorResponse.text,
+        intent: errorResponse.intent,
+        citations: errorResponse.citations,
+        functionsCalled: errorResponse.functionsCalled
+    });
+    // --- END: ADDED ERROR LOGGING ---
 
     return errorResponse;
   }

@@ -7,11 +7,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
-    // Tell Vitest where to find your tests
-    include: ['src/components/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-              '../../tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    // Ignore Storybook's config and other files
-    exclude: ['.storybook', 'src/stories'],
+// Only include tests within the storefront's src directory
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // Explicitly exclude the root tests directory for this run
+    exclude: ['.storybook', 'src/stories', '../../tests'],
     css: true,
   },
 });

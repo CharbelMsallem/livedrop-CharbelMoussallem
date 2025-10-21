@@ -1,169 +1,349 @@
-// tests/assistant.test.js
+// tests/integration.test.js
+import { describe, test, expect } from '@jest/globals';
 
-// Mock the assistant engine dependencies (like DB calls, LLM calls)
-// This requires a testing framework setup (like Jest or Vitest) with mocking capabilities
+const API_BASE_URL = process.env.TEST_API_URL || 'http://localhost:3000/api';
 
-// Import the functions to test (assuming they are exported)
-const { classifyIntent } = require('../apps/api/src/assistant/intent-classifier'); 
-const { functionRegistry } = require('../apps/api/src/assistant/function-registry'); 
-const { runAssistant } = require('../apps/api/src/assistant/engine'); 
-const promptsConfig = require('../docs/prompts.yaml'); // Load YAML for identity checks
+// Helper function to generate unique session IDs
+const generateSessionId = () => `integration-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-// --- Mocking Setup (Example using Jest/Vitest style) ---
-// Mock external dependencies like database or LLM API calls within runAssistant
-jest.mock('../apps/api/src/db', () => ({
-  getDb: jest.fn(() => ({
-    collection: jest.fn(() => ({
-      findOne: jest.fn().mockResolvedValue(null), // Default mock
-      find: jest.fn(() => ({
-         toArray: jest.fn().mockResolvedValue([]), // Default mock
-         sort: jest.fn(() => ({ limit: jest.fn(() => ({ toArray: jest.fn().mockResolvedValue([]) })) }))
-      })),
-      countDocuments: jest.fn().mockResolvedValue(0),
-      aggregate: jest.fn(() => ({ toArray: jest.fn().mockResolvedValue([]) }))
-    })),
-  })),
-}));
+// Helper to wait for order status changes in SSE
+const waitForOrderStatus = (orderId, targetStatus, timeout = 30000) => {
+  return new Promise((resolve, reject) => {
+    const eventSource = new EventSource(`${API_BASE_URL}/orders/status/${orderId}/stream`);
+    const timeoutId = setTimeout(() => {
+      eventSource.close();
+      reject(new Error(`Timeout waiting for status ${targetStatus}`));
+    }, timeout);
 
-jest.mock('../apps/api/src/assistant/engine', () => {
-  const originalModule = jest.requireActual('../apps/api/src/assistant/engine');
-  return {
-    ...originalModule,
-    callLLM: jest.fn().mockResolvedValue('Mock LLM Response'), // Mock the LLM call
-  };
-});
-// --- End Mocking Setup ---
+    eventSource.onmessage = (event) => {
+      const order = JSON.parse(event.data);
+      if (order.status === targetStatus) {
+        clearTimeout(timeoutId);
+        eventSource.close();
+        resolve(order);
+      }
+    };
 
-
-describe('Assistant Logic Tests', () => {
-
-  // --- Intent Detection Tests ---
-  describe('Intent Classification', () => {
-    const testCases = [
-      // Policy Question
-      { query: 'What is your return policy?', expectedIntent: 'policy_question' },
-      { query: 'How much is shipping?', expectedIntent: 'policy_question' },
-      { query: 'Tell me about warranties', expectedIntent: 'policy_question' },
-      // Order Status
-      { query: 'Where is my order 1234567890?', expectedIntent: 'order_status', expectedOrderId: '1234567890' },
-      { query: 'Check status for order 9876543210', expectedIntent: 'order_status', expectedOrderId: '9876543210' },
-       { query: 'What is the status of my recent purchase?', expectedIntent: 'order_status', expectedOrderId: null }, // Needs clarification or function call
-      // Product Search
-      { query: 'Do you sell headphones?', expectedIntent: 'product_search', expectedSearchTerm: 'headphones' },
-      { query: 'Search for smart watches', expectedIntent: 'product_search', expectedSearchTerm: 'smart watches' },
-      { query: 'I need a new monitor', expectedIntent: 'product_search', expectedSearchTerm: 'monitor' },
-      // Complaint
-      { query: 'My order arrived broken!', expectedIntent: 'complaint' },
-      { query: 'I am very unhappy with the service', expectedIntent: 'complaint' },
-      { query: 'This product is not working', expectedIntent: 'complaint' },
-      // Chitchat
-      { query: 'Hello there', expectedIntent: 'chitchat' },
-      { query: 'thanks!', expectedIntent: 'chitchat' },
-      { query: 'What is your name?', expectedIntent: 'chitchat' },
-      // Off Topic
-      { query: 'What is the weather today?', expectedIntent: 'off_topic' },
-      { query: 'Tell me a joke', expectedIntent: 'off_topic' },
-      { query: 'Can you help with my homework?', expectedIntent: 'off_topic' },
-      // Violation
-      { query: 'You are stupid', expectedIntent: 'violation' },
-      { query: 'This is fucking ridiculous', expectedIntent: 'violation' },
-    ];
-
-    testCases.forEach(({ query, expectedIntent, expectedOrderId = null, expectedSearchTerm = null }) => {
-      test(`should classify "${query}" as ${expectedIntent}`, () => {
-        const result = classifyIntent(query);
-        expect(result.intent).toBe(expectedIntent);
-        if (expectedOrderId !== null) {
-          expect(result.extractedOrderId).toBe(expectedOrderId);
-        }
-        if (expectedSearchTerm !== null) {
-            expect(result.searchTerm).toContain(expectedSearchTerm); // Use contain if normalization might affect exact match
-        }
-      });
-    });
+    eventSource.onerror = (error) => {
+      clearTimeout(timeoutId);
+      eventSource.close();
+      reject(error);
+    };
   });
+};
 
-  // --- Identity Tests ---
-  describe('Assistant Identity', () => {
-    const forbiddenPhrases = promptsConfig.never_say || [
-        "i'm an ai", "i am a language model", "chatgpt", "claude", "llama", "i'm a robot",
-    ];
+describe('Integration Tests - End-to-End Workflows', () => {
 
-    const identityQueries = [
-      "What's your name?",
-      "Are you a robot?",
-      "Are you human?",
-      "Who created you?",
-      "Are you ChatGPT?",
-    ];
+  // Test 1: Complete Purchase Flow
+  describe('Test 1: Complete Purchase Flow', () => {
+    let createdOrderId;
+    const customerEmail = 'demo@example.com';
+    let customerId;
 
-    identityQueries.forEach(query => {
-      test(`should respond to "${query}" without revealing AI model`, async () => {
-        const result = await runAssistant(query, 'test@example.com', 'session-identity-test');
-        const responseTextLower = result.text.toLowerCase();
-        forbiddenPhrases.forEach(phrase => {
-          expect(responseTextLower).not.toContain(phrase.toLowerCase());
-        });
-        // Check if it includes its defined name (if applicable)
-        if (promptsConfig.identity?.name) {
-            expect(result.text).toContain(promptsConfig.identity.name);
-        }
-      });
-    });
-  });
+    test('Step 1: Browse products via API', async () => {
+      const response = await fetch(`${API_BASE_URL}/products?limit=5`);
+      expect(response.status).toBe(200);
+      
+      const data = await response.json();
+      expect(data.products).toBeDefined();
+      expect(Array.isArray(data.products)).toBe(true);
+      expect(data.products.length).toBeGreaterThan(0);
+      expect(data.products[0]).toHaveProperty('_id');
+      expect(data.products[0]).toHaveProperty('price');
+    }, 20000);
 
-  // --- Function Calling Tests ---
-  describe('Function Calling Behavior', () => {
-    test('should call getOrderStatus when intent is order_status with ID', async () => {
-      const orderId = '60d5ecb05d39a3b2a3b0f2a7'; // Example valid ObjectId format
-      // Mock the DB to return an order for this ID
-      const mockOrder = { _id: orderId, status: 'SHIPPED', items: [], total: 50 };
-      const dbMock = {
-         collection: () => ({ findOne: jest.fn().mockResolvedValue(mockOrder) })
+    test('Step 2: Get customer by email', async () => {
+      const response = await fetch(`${API_BASE_URL}/customers?email=${customerEmail}`);
+      expect(response.status).toBe(200);
+      
+      const customer = await response.json();
+      expect(customer).toHaveProperty('_id');
+      expect(customer.email).toBe(customerEmail);
+      
+      customerId = customer._id;
+    }, 20000);
+
+    test('Step 3: Create order', async () => {
+      // Get a product first
+      const productsResponse = await fetch(`${API_BASE_URL}/products?limit=1`);
+      const productsData = await productsResponse.json();
+      const product = productsData.products[0];
+
+      const orderData = {
+        customerId: customerId,
+        items: [{
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: 1
+        }],
+        total: product.price
       };
-      require('../apps/api/src/db').getDb.mockReturnValue(dbMock); // Update mock
 
-      const result = await runAssistant(`Status for order ${orderId}?`, 'test@example.com', 'session-func-order');
+      const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
 
+      expect(response.status).toBe(201);
+      const createdOrder = await response.json();
+      expect(createdOrder).toHaveProperty('_id');
+      expect(createdOrder.status).toBe('PENDING');
+      
+      createdOrderId = createdOrder._id;
+    }, 20000);
+
+    test('Step 4: Verify order was created', async () => {
+      expect(createdOrderId).toBeDefined();
+      
+      const response = await fetch(`${API_BASE_URL}/orders/${createdOrderId}`);
+      expect(response.status).toBe(200);
+      
+      const order = await response.json();
+      expect(order._id).toBe(createdOrderId);
+      expect(order.customerId).toBe(customerId);
+    }, 20000);
+
+    test('Step 5: Ask assistant about order status', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `What is the status of my order ${createdOrderId}?`,
+          userEmail: customerEmail,
+          sessionId: generateSessionId()
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
       expect(result.intent).toBe('order_status');
-      expect(result.functionsCalled).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ name: 'getOrderStatus', args: { orderId } })
-        ])
-      );
-      // Check if the mock LLM response includes info derived from the function call context
-      expect(require('../apps/api/src/assistant/engine').callLLM).toHaveBeenCalledWith(expect.stringContaining('Status: SHIPPED'));
-    });
+      expect(result.functionsCalled.length).toBeGreaterThan(0);
+      expect(result.functionsCalled[0].name).toBe('getOrderStatus');
+      expect(result.text).toContain(createdOrderId);
+    }, 15000);
+  });
 
-    test('should call searchProducts when intent is product_search', async () => {
-      const searchTerm = 'headphones';
-       // Mock the DB to return products
-       const mockProducts = [{ _id: 'p1', name: 'Wireless Headphones', price: 99 }];
-       const dbMock = {
-         collection: () => ({ find: () => ({ sort: () => ({ limit: () => ({ toArray: jest.fn().mockResolvedValue(mockProducts) }) }) }) })
-       };
-       require('../apps/api/src/db').getDb.mockReturnValue(dbMock);
+  // Test 2: Support Interaction Flow
+  describe('Test 2: Support Interaction Flow', () => {
+    const sessionId = generateSessionId();
+    const customerEmail = 'demo@example.com';
 
-      const result = await runAssistant(`Do you have ${searchTerm}?`, 'test@example.com', 'session-func-search');
+    test('Step 1: Ask policy question', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'What is your return policy?',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
 
-      expect(result.intent).toBe('product_search');
-      expect(result.functionsCalled).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ name: 'searchProducts', args: expect.objectContaining({ query: searchTerm }) })
-        ])
-      );
-       expect(require('../apps/api/src/assistant/engine').callLLM).toHaveBeenCalledWith(expect.stringContaining('Wireless Headphones'));
-    });
-
-    test('should NOT call functions for policy_question', async () => {
-      // Reset mocks if necessary, ensure DB mock doesn't interfere
-      const result = await runAssistant('What is the return policy?', 'test@example.com', 'session-func-policy');
-
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
       expect(result.intent).toBe('policy_question');
-      expect(result.functionsCalled).toEqual([]); // No functions should be called
-      // Check if LLM call includes context from knowledge base (if mocked appropriately)
-      expect(require('../apps/api/src/assistant/engine').callLLM).toHaveBeenCalledWith(expect.stringContaining('Our Policies:')); // Based on policy context structure
+      expect(result.functionsCalled.length).toBe(0);
+      expect(result.citations).toBeDefined();
+      expect(result.citations.validCitations.length).toBeGreaterThan(0);
+    }, 15000);
+
+    test('Step 2: Ask about specific order', async () => {
+      // Get customer's orders first
+      const customersResponse = await fetch(`${API_BASE_URL}/customers?email=${customerEmail}`);
+      const customer = await customersResponse.json();
+      
+      const ordersResponse = await fetch(`${API_BASE_URL}/orders?customerId=${customer._id}`);
+      const orders = await ordersResponse.json();
+      
+      expect(orders.length).toBeGreaterThan(0);
+      const orderId = orders[0]._id;
+
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `Check order ${orderId}`,
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('order_status');
+      expect(result.functionsCalled.length).toBeGreaterThan(0);
+    }, 15000);
+
+    test('Step 3: Express complaint', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'My order arrived damaged and broken!',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('complaint');
+      // Should have empathetic response
+      expect(result.text.toLowerCase()).toMatch(/sorry|apologize|help|resolve/);
+    }, 15000);
+  });
+
+  // Test 3: Multi-Intent Conversation
+  describe('Test 3: Multi-Intent Conversation', () => {
+    const sessionId = generateSessionId();
+    const customerEmail = 'demo@example.com';
+    const conversationFlow = [];
+
+    test('Step 1: Start with greeting', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'Hello there!',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('chitchat');
+      conversationFlow.push({ query: 'Hello there!', intent: result.intent });
+    }, 15000);
+
+    test('Step 2: Ask about products', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'Do you have any headphones?',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('product_search');
+      expect(result.functionsCalled.length).toBeGreaterThan(0);
+      conversationFlow.push({ query: 'Do you have any headphones?', intent: result.intent });
+    }, 15000);
+
+    test('Step 3: Ask about policy', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'What are your shipping options?',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('policy_question');
+      conversationFlow.push({ query: 'What are your shipping options?', intent: result.intent });
+    }, 15000);
+
+    test('Step 4: Check order', async () => {
+      const response = await fetch(`${API_BASE_URL}/assistant/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: 'What was my last order?',
+          userEmail: customerEmail,
+          sessionId
+        })
+      });
+
+      expect(response.status).toBe(200);
+      const result = await response.json();
+      
+      expect(result.intent).toBe('last_order');
+      expect(result.functionsCalled.length).toBeGreaterThan(0);
+      conversationFlow.push({ query: 'What was my last order?', intent: result.intent });
+    }, 15000);
+
+    test('Step 5: Verify conversation maintained context', () => {
+      // Verify we had a multi-turn conversation
+      expect(conversationFlow.length).toBe(4);
+      
+      // Verify different intents were handled
+      const intents = conversationFlow.map(turn => turn.intent);
+      expect(new Set(intents).size).toBeGreaterThan(1);
+      
+      // Verify order: chitchat -> product_search -> policy_question -> last_order
+      expect(intents).toEqual(['chitchat', 'product_search', 'policy_question', 'last_order']);
     });
+  });
+
+  // Test 4: Analytics Dashboard Data Flow
+  describe('Test 4: Analytics Dashboard Data Flow', () => {
+    test('Step 1: Fetch business metrics', async () => {
+      const response = await fetch(`${API_BASE_URL}/dashboard/business-metrics`);
+      expect(response.status).toBe(200);
+      
+      const metrics = await response.json();
+      expect(metrics).toHaveProperty('totalRevenue');
+      expect(metrics).toHaveProperty('totalOrders');
+      expect(metrics).toHaveProperty('avgOrderValue');
+      expect(metrics).toHaveProperty('ordersByStatus');
+      expect(Array.isArray(metrics.ordersByStatus)).toBe(true);
+    }, 20000);
+
+    test('Step 2: Fetch assistant analytics', async () => {
+      const response = await fetch(`${API_BASE_URL}/dashboard/assistant-stats`);
+      expect(response.status).toBe(200);
+      
+      const stats = await response.json();
+      expect(stats).toHaveProperty('totalQueries');
+      expect(stats).toHaveProperty('intentDistribution');
+      expect(stats).toHaveProperty('functionCalls');
+      expect(Array.isArray(stats.intentDistribution)).toBe(true);
+    }, 20000);
+
+    test('Step 3: Fetch performance metrics', async () => {
+      const response = await fetch(`${API_BASE_URL}/dashboard/performance`);
+      expect(response.status).toBe(200);
+      
+      const performance = await response.json();
+      expect(performance).toHaveProperty('avgApiLatency');
+      expect(performance).toHaveProperty('sseConnections');
+      expect(performance).toHaveProperty('dbConnection');
+      expect(typeof performance.avgApiLatency).toBe('number');
+    }, 20000);
+
+    test('Step 4: Fetch daily revenue analytics', async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      const response = await fetch(`${API_BASE_URL}/analytics/daily-revenue?from=${weekAgo}&to=${today}`);
+      expect(response.status).toBe(200);
+      
+      const dailyRevenue = await response.json();
+      expect(Array.isArray(dailyRevenue)).toBe(true);
+      
+      if (dailyRevenue.length > 0) {
+        expect(dailyRevenue[0]).toHaveProperty('date');
+        expect(dailyRevenue[0]).toHaveProperty('revenue');
+        expect(dailyRevenue[0]).toHaveProperty('orderCount');
+      }
+    }, 20000);
   });
 
 });

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUserStore } from './lib/store';
 import { Header } from './components/organisms/Header';
-import { SupportPanel } from './components/organisms/SupportPanel';
+import { SupportAssistant } from './components/organisms/SupportAssistant';
 import { Router, Route, Routes, useRouter } from './lib/router'; // Import useRouter here too
 import { CatalogPage } from './pages/catalog';
 import { ProductPage } from './pages/product';
@@ -89,7 +89,7 @@ export function App() {
             <Route path="/admin" component={AdminDashboardPage} />
           </Routes>
         </main>
-        <SupportPanel
+        <SupportAssistant
           isOpen={isSupportOpen}
           onClose={() => setSupportOpen(false)}
         />

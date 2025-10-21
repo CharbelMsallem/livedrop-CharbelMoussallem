@@ -3,20 +3,26 @@
 const intentKeywords = {
   // High priority identity/chitchat patterns
   chitchat: {
-    identity: ['what is your name', 'who are you', 'are you a robot', 'are you ai', 'are you a bot', 'are you human'],
+    identity: [
+      'what is your name', 'who are you', 'are you a robot', 'are you ai', 
+      'are you a bot', 'are you human', 'are you chatgpt', 'who created you',
+      'what do you do', 'what is your purpose', 'your name', 'tell me about yourself'
+    ],
     greetings: ['hello', 'hi there', 'hey there', 'good morning', 'good afternoon'],
     courtesy: ['thank you', 'thanks', 'bye', 'goodbye'],
     casual: ['how are you', 'who created you', 'that\'s it']
   },
   
-  policy_question: ['policy', 'return', 'refund', 'shipping', 'warranty', 'privacy', 'security', 'tax', 'payment method', 'accept payment', 'pay with', 'how to buy', 'how do i return', 'how do i get a refund', 'shipping fee'],
+  policy_question: ['policy', 'return', 'refund', 'shipping', 'warranty', 'privacy', 'security', 'tax', 'payment method',
+                    'accept payment', 'pay with', 'how to buy', 'how do i return', 'how do i get a refund', 'shipping fee', 'warranties', 'warranty'],
   
   order_status: ['order status', 'track my order', 'where is my order', 'delivery status', 'order #', 'order id'],
   
   order_count: ['how many orders', 'number of my orders', 'my total orders', 'count my orders'],
   
   product_search: {
-    explicit: ['search for', 'find product', 'do you have', 'do you sell', 'looking for', 'buy a', 'shop for', 'show me', 'available'],
+    explicit: ['search for', 'find product', 'do you have', 'do you sell', 'looking for',
+               'buy a', 'shop for', 'show me', 'available', 'looking to buy', 'want to buy', 'i need a', 'i need to buy'],
     implicit: ['price of', 'cost of', 'how much is']
   },
   
@@ -28,6 +34,11 @@ const intentKeywords = {
   
   complaint: ['issue', 'problem', 'complaint', 'wrong', 'broken', 'not working', 'unhappy', 'disappointed', 'frustrated'],
   
+  off_topic: [
+    'joke', 'weather', 'homework', 'capital of', 'election', 'won', 'jumped',
+    'meaning of life', 'tell me a story', 'who won', 'what is the weather', 'tell me a joke'
+  ],
+
   violation: ['fuck', 'shit', 'damn', 'asshole', 'bitch', 'stupid', 'idiot']
 };
 
@@ -89,11 +100,15 @@ export function classifyIntent(query) {
     return { intent: 'policy_question', extractedOrderId: null };
   }
 
-  // 6. Product search (explicit indicators)
+  // 6. Explicit Off-topic 
+  if (intentKeywords.off_topic.some(kw => normalized.includes(kw))) {
+    return { intent: 'off_topic', extractedOrderId: null };
+  }
+
+  // 7. Product search (explicit indicators)
   const explicitSearchMatch = intentKeywords.product_search.explicit.find(kw => normalized.includes(kw));
   if (explicitSearchMatch) {
     let searchTerm = normalized.replace(explicitSearchMatch, '').trim();
-    // Clean up common words
     searchTerm = searchTerm.replace(/^(the|an|a|any|some)\s+/g, '').trim();
     return { 
       intent: 'product_search', 
@@ -102,7 +117,7 @@ export function classifyIntent(query) {
     };
   }
 
-  // 7. Product search (implicit - price/cost questions)
+  // 8. Product search (implicit - price/cost questions)
   const implicitSearchMatch = intentKeywords.product_search.implicit.find(kw => normalized.includes(kw));
   if (implicitSearchMatch) {
     let searchTerm = normalized.replace(implicitSearchMatch, '').trim();
@@ -114,15 +129,14 @@ export function classifyIntent(query) {
     };
   }
 
-  // 8. Complaint detection
+  // 9. Complaint detection
   if (intentKeywords.complaint.some(kw => normalized.includes(kw))) {
     return { intent: 'complaint', extractedOrderId: null };
   }
 
-  // 9. Short product queries (heuristic for simple product names)
+  // 10. Short product queries (heuristic for simple product names)
   const words = normalized.split(' ');
   if (words.length <= 4 && words.length >= 1) {
-    // Avoid false positives for common questions
     const commonNonProductWords = ['what', 'how', 'why', 'when', 'where', 'can', 'could', 'should', 'would'];
     if (!commonNonProductWords.some(w => words.includes(w))) {
       return { 
@@ -133,6 +147,6 @@ export function classifyIntent(query) {
     }
   }
 
-  // 10. Default to off_topic
+  // 11. Default to off_topic (This remains as the fallback)
   return { intent: 'off_topic', extractedOrderId: null };
 }

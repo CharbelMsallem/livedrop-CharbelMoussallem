@@ -4,7 +4,7 @@ import { Input } from '../atoms/Input';
 import { processQuery, ChatMessage } from '../../assistant/engine';
 import { useUserStore } from '../../lib/store';
 
-interface SupportPanelProps {
+interface SupportAssistantProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -22,7 +22,7 @@ const getStorageKey = (customerId: string | undefined) => {
   return `shoplite-chat-history-${customerId}`;
 };
 
-export const SupportPanel = forwardRef<HTMLDivElement, SupportPanelProps>(({ isOpen, onClose }, ref) => {
+export const SupportAssistant = forwardRef<HTMLDivElement, SupportAssistantProps>(({ isOpen, onClose }, ref) => {
   const { customer } = useUserStore();
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -87,7 +87,7 @@ export const SupportPanel = forwardRef<HTMLDivElement, SupportPanelProps>(({ isO
       const assistantMessage: ChatMessage = { role: 'assistant', content: response };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error("Error processing query in SupportPanel:", error);
+      console.error("Error processing query in SupportAssistant:", error);
       const errorMessage: ChatMessage = { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' };
       setMessages(prev => [...prev, errorMessage]);
     } finally {

@@ -1,4 +1,5 @@
 // tests/api.test.js
+import { describe, test, expect } from '@jest/globals';
 
 // Mock fetch or use a library like 'supertest' if testing locally
 // For this example, we'll assume a running API endpoint (replace with your actual deployed API URL)
@@ -25,14 +26,14 @@ describe('API Endpoint Tests', () => {
   test('POST /api/orders with valid data should create an order', async () => {
     // Note: You need a valid customerId and product details from your seeded data
     const mockOrderData = {
-      customerId: 'your_seeded_customer_id', // Replace with a real ID from your DB
+      customerId: '68f0fdcf12c99ef2f5ea83dd', // Replace with a real ID from your DB
       items: [{
-        productId: 'your_seeded_product_id', // Replace with real ID
-        name: 'Test Product',
-        price: 10.99,
+        productId: 'p003', // Replace with real ID
+        name: 'Curved Gaming Monitor',
+        price: 279.95,
         quantity: 1
        }],
-      total: 10.99,
+      total: 1199.99,
     };
 
     const response = await fetch(`${API_BASE_URL}/orders`, {
