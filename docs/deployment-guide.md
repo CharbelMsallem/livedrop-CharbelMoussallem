@@ -126,8 +126,8 @@ To run the entire stack locally:
 
 4.  **Frontend Storefront:**
     * Navigate to `/apps/storefront`.
-    * Create a `.env.local` file.
-    * Add `VITE_API_BASE_URL=http://localhost:3000` (or the port your API is running on).
+    * Create a `.env` file.
+    * Add `VITE_API_BASE_URL=http://localhost:3000` (or the port your API is running on. When deployed, add the render URL). 
     * Run `pnpm dev`. Access via `http://localhost:5173` (or the port shown).
 
 5.  **LLM:**
