@@ -6,7 +6,7 @@ import { Order } from '../lib/api';
 import { sseClient } from '../lib/sse-client';
 import { OrderTracking } from '../components/molecules/OrderTracking';
 import { Button } from '../components/atoms/Button';
-import { formatCurrency, formatDate } from '../lib/format';
+import { formatCurrency } from '../lib/format';
 
 export function OrderStatusPage() {
   const { navigate } = useRouter();
