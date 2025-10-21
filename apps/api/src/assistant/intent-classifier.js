@@ -1,16 +1,34 @@
 // apps/api/src/assistant/intent-classifier.js
 
 const intentKeywords = {
-  policy_question: ['policy', 'return', 'refund', 'shipping', 'warranty', 'privacy', 'security', 'tax', 'cost', 'fee', 'payment', 'accept', 'pay with', 'stock', 'badge', 'quantity', 'account', 'add to cart', 'how to buy', 'how do i'],
+  // High priority identity/chitchat patterns
+  chitchat: {
+    identity: ['what is your name', 'who are you', 'are you a robot', 'are you ai', 'are you a bot', 'are you human'],
+    greetings: ['hello', 'hi there', 'hey there', 'good morning', 'good afternoon'],
+    courtesy: ['thank you', 'thanks', 'bye', 'goodbye'],
+    casual: ['how are you', 'who created you', 'that\'s it']
+  },
+  
+  policy_question: ['policy', 'return', 'refund', 'shipping', 'warranty', 'privacy', 'security', 'tax', 'payment method', 'accept payment', 'pay with', 'how to buy', 'how do i return', 'how do i get a refund', 'shipping fee'],
+  
   order_status: ['order status', 'track my order', 'where is my order', 'delivery status', 'order #', 'order id'],
+  
   order_count: ['how many orders', 'number of my orders', 'my total orders', 'count my orders'],
-  product_search: ['search for', 'find', 'do you have', 'looking for', 'product', 'item', 'buy', 'shop for', 'price of', 'cost of', 'how much is'],
-  product_count: ['how many products', 'total products', 'count products', 'number of items'],
+  
+  product_search: {
+    explicit: ['search for', 'find product', 'do you have', 'do you sell', 'looking for', 'buy a', 'shop for', 'show me', 'available'],
+    implicit: ['price of', 'cost of', 'how much is']
+  },
+  
+  product_count: ['how many products', 'total products', 'count all items', 'number of items', 'products in stock'],
+  
   total_spendings: ['how much have i spent', 'how much did i spend', 'total spent', 'my spending', 'expenditure', 'total spending'],
-  last_order: ['my last order', 'previous order', 'most recent purchase', 'what did i buy last'],
+  
+  last_order: ['my last order', 'previous order', 'most recent purchase', 'what did i buy last', 'latest order'],
+  
   complaint: ['issue', 'problem', 'complaint', 'wrong', 'broken', 'not working', 'unhappy', 'disappointed', 'frustrated'],
-  chitchat: ['hello', 'hi', 'hey', 'thanks', 'thank you', 'bye', 'goodbye', 'how are you', 'your name'],
-  violation: ['fuck', 'shit', 'damn', 'asshole', 'bitch', 'stupid', 'idiot'],
+  
+  violation: ['fuck', 'shit', 'damn', 'asshole', 'bitch', 'stupid', 'idiot']
 };
 
 function extractOrderId(query) {
@@ -18,78 +36,103 @@ function extractOrderId(query) {
   return orderIdMatch ? orderIdMatch[0] : null;
 }
 
-export function classifyIntent(query) {
-  const lowerQuery = query.toLowerCase().trim();
+function normalizeQuery(query) {
+  return query.toLowerCase().trim()
+    .replace(/[?!.,;:]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' '); // Normalize whitespace
+}
 
-  if (!lowerQuery) {
+export function classifyIntent(query) {
+  const normalized = normalizeQuery(query);
+  
+  if (!normalized) {
     return { intent: 'chitchat', extractedOrderId: null };
   }
 
-  if (intentKeywords.violation.some(keyword => lowerQuery.includes(keyword))) {
+  // 1. Violations (highest priority)
+  if (intentKeywords.violation.some(kw => normalized.includes(kw))) {
     return { intent: 'violation', extractedOrderId: null };
   }
 
-  // --- High-priority check for unambiguous policy terms ---
-  if (['return', 'refund', 'shipping policy'].some(keyword => lowerQuery.includes(keyword))) {
-    return { intent: 'policy_question', extractedOrderId: null };
+  // 2. Identity/Chitchat (before product search to prevent misclassification)
+  for (const [category, phrases] of Object.entries(intentKeywords.chitchat)) {
+    if (phrases.some(phrase => normalized.includes(phrase))) {
+      return { intent: 'chitchat', extractedOrderId: null };
+    }
   }
 
-  // --- Check for specific, high-priority intents first ---
-
-  const orderId = extractOrderId(lowerQuery);
-  if (intentKeywords.order_status.some(keyword => lowerQuery.includes(keyword)) || orderId) {
+  // 3. Order-related intents with high specificity
+  const orderId = extractOrderId(normalized);
+  if (intentKeywords.order_status.some(kw => normalized.includes(kw)) || orderId) {
     return { intent: 'order_status', extractedOrderId: orderId };
   }
-
-  if (intentKeywords.order_count.some(keyword => lowerQuery.includes(keyword))) {
-      return { intent: 'order_count', extractedOrderId: null };
-  }
-
-  if (intentKeywords.last_order.some(keyword => lowerQuery.includes(keyword))) {
+  
+  if (intentKeywords.last_order.some(kw => normalized.includes(kw))) {
     return { intent: 'last_order', extractedOrderId: null };
   }
-
-  if (intentKeywords.total_spendings.some(keyword => lowerQuery.includes(keyword))) {
+  
+  if (intentKeywords.order_count.some(kw => normalized.includes(kw))) {
+    return { intent: 'order_count', extractedOrderId: null };
+  }
+  
+  if (intentKeywords.total_spendings.some(kw => normalized.includes(kw))) {
     return { intent: 'total_spendings', extractedOrderId: null };
   }
 
-  if (intentKeywords.product_count.some(keyword => lowerQuery.includes(keyword))) {
+  // 4. Product count (specific query)
+  if (intentKeywords.product_count.some(kw => normalized.includes(kw))) {
     return { intent: 'product_count', extractedOrderId: null };
   }
 
-  // --- Check for policy questions BEFORE generic product searches ---
-  if (intentKeywords.policy_question.some(keyword => lowerQuery.includes(keyword))) {
-      // Avoid misclassifying "how much is a product" as a policy question
-      if (!intentKeywords.product_search.some(searchKw => lowerQuery.includes(searchKw))) {
-        return { intent: 'policy_question', extractedOrderId: null };
-      }
+  // 5. Policy questions (before product search)
+  if (intentKeywords.policy_question.some(kw => normalized.includes(kw))) {
+    return { intent: 'policy_question', extractedOrderId: null };
   }
 
-
-  const productSearchKeyword = intentKeywords.product_search.find(keyword => lowerQuery.includes(keyword));
-  if (productSearchKeyword) {
-    let searchTerm = lowerQuery.replace(productSearchKeyword, '').trim();
-    searchTerm = searchTerm.replace(/^the |^an |^a |^\?|\?$/g, '').trim();
-    return { intent: 'product_search', extractedOrderId: null, searchTerm: searchTerm || null };
+  // 6. Product search (explicit indicators)
+  const explicitSearchMatch = intentKeywords.product_search.explicit.find(kw => normalized.includes(kw));
+  if (explicitSearchMatch) {
+    let searchTerm = normalized.replace(explicitSearchMatch, '').trim();
+    // Clean up common words
+    searchTerm = searchTerm.replace(/^(the|an|a|any|some)\s+/g, '').trim();
+    return { 
+      intent: 'product_search', 
+      extractedOrderId: null, 
+      searchTerm: searchTerm || normalized 
+    };
   }
 
-  // --- Fallback intents ---
+  // 7. Product search (implicit - price/cost questions)
+  const implicitSearchMatch = intentKeywords.product_search.implicit.find(kw => normalized.includes(kw));
+  if (implicitSearchMatch) {
+    let searchTerm = normalized.replace(implicitSearchMatch, '').trim();
+    searchTerm = searchTerm.replace(/^(the|an|a)\s+/g, '').trim();
+    return { 
+      intent: 'product_search', 
+      extractedOrderId: null, 
+      searchTerm: searchTerm || normalized 
+    };
+  }
 
-  if (intentKeywords.complaint.some(keyword => lowerQuery.includes(keyword))) {
+  // 8. Complaint detection
+  if (intentKeywords.complaint.some(kw => normalized.includes(kw))) {
     return { intent: 'complaint', extractedOrderId: null };
   }
 
-  if (intentKeywords.chitchat.some(keyword => lowerQuery.includes(keyword))) {
-    return { intent: 'chitchat', extractedOrderId: null };
-  }
-  
-  // --- FINAL HEURISTIC: Assume short, unrecognized queries are product searches ---
-  // If no other intent has been matched, and the query is reasonably short,
-  // treat it as a direct search for a product. This handles follow-ups like "4k ultra hd smart tv".
-  if (lowerQuery.split(' ').length <= 6) {
-    return { intent: 'product_search', extractedOrderId: null, searchTerm: lowerQuery };
+  // 9. Short product queries (heuristic for simple product names)
+  const words = normalized.split(' ');
+  if (words.length <= 4 && words.length >= 1) {
+    // Avoid false positives for common questions
+    const commonNonProductWords = ['what', 'how', 'why', 'when', 'where', 'can', 'could', 'should', 'would'];
+    if (!commonNonProductWords.some(w => words.includes(w))) {
+      return { 
+        intent: 'product_search', 
+        extractedOrderId: null, 
+        searchTerm: normalized 
+      };
+    }
   }
 
-
+  // 10. Default to off_topic
   return { intent: 'off_topic', extractedOrderId: null };
 }

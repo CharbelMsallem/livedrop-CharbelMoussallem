@@ -2,31 +2,59 @@
 import { getDb } from '../db.js';
 import { ObjectId } from 'mongodb';
 
+// Create text index on products collection for better search
+// Run this once: db.products.createIndex({ name: "text", description: "text", tags: "text" })
+
 async function getOrder(orderId) {
   if (!ObjectId.isValid(orderId)) {
-      console.warn(`[Function Registry] Invalid order ID format: ${orderId}`);
+      console.warn(`[Function] Invalid order ID: ${orderId}`);
       return null;
   }
-  console.log(`[Function Registry] Fetching order ${orderId}...`);
+  
   const db = getDb();
   return await db.collection('orders').findOne({ _id: new ObjectId(orderId) });
 }
 
 async function searchProductsByName(query, limit = 3) {
-  console.log(`[Function Registry] Searching products for "${query}" (limit ${limit})...`);
   const db = getDb();
-  return await db.collection('products')
-    .find({ name: { $regex: query, $options: 'i' } })
+  
+  // Normalize search term - remove common words
+  const normalized = query.toLowerCase()
+    .replace(/\b(any|some|the|a|an)\b/g, '')
+    .trim();
+  
+  // Try text search first (requires text index)
+  let products = await db.collection('products')
+    .find(
+      { $text: { $search: normalized } },
+      { score: { $meta: "textScore" } }
+    )
+    .sort({ score: { $meta: "textScore" } })
     .limit(limit)
     .toArray();
+
+  // Fallback to regex if no text search results
+  if (products.length === 0) {
+    products = await db.collection('products')
+      .find({ 
+        $or: [
+          { name: { $regex: normalized, $options: 'i' } },
+          { tags: { $regex: normalized, $options: 'i' } }
+        ]
+      })
+      .limit(limit)
+      .toArray();
+  }
+
+  return products;
 }
 
 async function getOrdersByCustomerId(customerId, limit = 1) {
     if (!ObjectId.isValid(customerId)) {
-      console.warn(`[Function Registry] Invalid customer ID format: ${customerId}`);
+      console.warn(`[Function] Invalid customer ID: ${customerId}`);
       return [];
   }
-  console.log(`[Function Registry] Fetching orders for customer ${customerId} (limit ${limit})...`);
+  
   const db = getDb();
   return await db.collection('orders')
     .find({ customerId: new ObjectId(customerId) })
@@ -37,26 +65,25 @@ async function getOrdersByCustomerId(customerId, limit = 1) {
 
 async function countCustomerOrders(customerId) {
     if (!ObjectId.isValid(customerId)) {
-        console.warn(`[Function Registry] Invalid customer ID format for count: ${customerId}`);
+        console.warn(`[Function] Invalid customer ID for count: ${customerId}`);
         return 0;
     }
-    console.log(`[Function Registry] Counting orders for customer ${customerId}...`);
+    
     const db = getDb();
     return await db.collection('orders').countDocuments({ customerId: new ObjectId(customerId) });
 }
 
 async function countAllProducts() {
-    console.log(`[Function Registry] Counting all products...`);
     const db = getDb();
     return await db.collection('products').countDocuments();
 }
 
 async function calculateTotalSpending(customerId) {
    if (!ObjectId.isValid(customerId)) {
-      console.warn(`[Function Registry] Invalid customer ID format: ${customerId}`);
+      console.warn(`[Function] Invalid customer ID: ${customerId}`);
       return { totalSpent: 0, orderCount: 0 };
    }
-   console.log(`[Function Registry] Calculating total spending for customer ${customerId}...`);
+   
    const db = getDb();
    const result = await db.collection('orders').aggregate([
      { $match: { customerId: new ObjectId(customerId) } },
@@ -70,82 +97,87 @@ const functions = {
   getOrderStatus: {
     schema: {
       name: 'getOrderStatus',
-      description: 'Retrieves the current status and details of a specific Shoplite order.',
+      description: 'Retrieves order status and details',
       parameters: {
         type: 'object',
         properties: {
-          orderId: { type: 'string', description: 'The unique ID of the order.' },
+          orderId: { type: 'string', description: 'Order ID' },
         },
         required: ['orderId'],
       },
     },
     execute: async ({ orderId }) => await getOrder(orderId),
   },
+  
   searchProducts: {
      schema: {
        name: 'searchProducts',
-       description: 'Searches the Shoplite product catalog based on a query string.',
+       description: 'Searches products by name or tags',
        parameters: {
          type: 'object',
          properties: {
-           query: { type: 'string', description: 'The search term for products (e.g., "smart watch", "headphones").' },
-           limit: { type: 'number', description: 'Maximum number of products to return (default: 3).', default: 3 },
+           query: { type: 'string', description: 'Search term' },
+           limit: { type: 'number', description: 'Max results', default: 3 },
          },
          required: ['query'],
        },
      },
      execute: async ({ query, limit }) => await searchProductsByName(query, limit),
    },
+   
   getCustomerOrders: {
     schema: {
       name: 'getCustomerOrders',
-      description: "Retrieves a customer's order history, usually the most recent one.",
+      description: "Gets customer's order history",
       parameters: {
         type: 'object',
         properties: {
-          customerId: { type: 'string', description: "The customer's unique ID." },
-           limit: { type: 'number', description: 'Maximum number of orders to return (default: 1).', default: 1 },
+          customerId: { type: 'string', description: "Customer ID" },
+          limit: { type: 'number', description: 'Max orders', default: 1 },
         },
         required: ['customerId'],
       },
     },
     execute: async ({ customerId, limit }) => await getOrdersByCustomerId(customerId, limit),
   },
+  
    getProductCount: {
      schema: {
        name: 'getProductCount',
-       description: 'Counts the total number of products available in the Shoplite store.',
+       description: 'Counts total products in store',
        parameters: { type: 'object', properties: {} },
      },
      execute: async () => await countAllProducts(),
    },
+   
     getTotalSpendings: {
       schema: {
         name: 'getTotalSpendings',
-        description: 'Calculates the total amount a customer has spent and the number of orders they placed.',
+        description: 'Calculates customer total spending',
         parameters: {
           type: 'object',
           properties: {
-            customerId: { type: 'string', description: "The customer's unique ID." },
+            customerId: { type: 'string', description: "Customer ID" },
           },
           required: ['customerId'],
         },
       },
       execute: async ({ customerId }) => await calculateTotalSpending(customerId),
    },
+   
    countCustomerOrders: {
        schema: {
            name: 'countCustomerOrders',
-           description: "Counts the total number of orders a customer has placed.",
+           description: "Counts customer's total orders",
            parameters: {
                type: 'object',
                properties: {
-                   customerId: { type: 'string', description: "The customer's unique ID." },
+                   customerId: { type: 'string', description: "Customer ID" },
                },
                required: ['customerId'],
            },
        },
-       execute: async ({ customerId }) => ({ orderCount: await countCustomerOrders(customerId) }), // Return as an object
+       execute: async ({ customerId }) => ({ orderCount: await countCustomerOrders(customerId) }),
    }
 };
 
@@ -154,14 +186,17 @@ export const functionRegistry = {
     if (!functions[name]) {
       throw new Error(`Function "${name}" not found.`);
     }
+    
     try {
-        console.log(`[Function Registry] Executing function "${name}" with args:`, args);
         const result = await functions[name].execute(args);
-        console.log(`[Function Registry] Function "${name}" executed successfully.`);
         return result;
     } catch(error) {
-        console.error(`[Function Registry] Error executing function "${name}":`, error);
-        throw new Error(`Execution failed for function ${name}: ${error.message}`);
+        console.error(`[Function] Error executing ${name}:`, error.message);
+        throw new Error(`Execution failed for ${name}: ${error.message}`);
     }
   },
+  
+  getAllSchemas: () => {
+    return Object.values(functions).map(f => f.schema);
+  }
 };
