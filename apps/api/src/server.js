@@ -31,7 +31,7 @@ export const resetFailedRequestCounter = () => { failedRequestCount = 0; } // Re
 
 const allowedOrigins = [
   'http://localhost:5173',
-  // Add your deployed frontend URL here
+  'https://livedrop-charbel-moussallem.vercel.app'
 ];
 
 app.use(cors({
