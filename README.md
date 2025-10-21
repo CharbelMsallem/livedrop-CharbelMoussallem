@@ -31,7 +31,7 @@ This user has been seeded with the following order history for testing purposes.
 
 1.  **Order (Processing):**
     * **Items:** Curved Gaming Monitor (Quantity: 1)
-    * **Total:** $1199.99
+    * **Total:** $308.34
     * **Status:** PROCESSING
 2.  **Order (Shipped):**
     * **Items:** Digital SLR Camera Kit (Quantity: 1), Portable Power Bank (20,000mAh) (Quantity: 2)

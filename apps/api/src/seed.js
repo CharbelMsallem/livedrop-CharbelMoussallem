@@ -84,7 +84,7 @@ async function seed() {
     console.log("Seeding orders...");
     const orders = [
       // 3 orders for Demo User
-      { customerId: demoUser._id, items: [{ productId: 'p003', name: products[2].name, price: products[2].price, quantity: 1 }], total: 1199.99, status: 'PROCESSING', createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
+      { customerId: demoUser._id, items: [{ productId: 'p003', name: products[2].name, price: products[2].price, quantity: 1 }], total: 308.34, status: 'PROCESSING', createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
       { customerId: demoUser._id, items: [{ productId: 'p006', name: products[5].name, price: products[5].price, quantity: 1 }, { productId: 'p007', name: products[9].name, price: products[9].price, quantity: 2 }], total: 409.93, status: 'SHIPPED', carrier: 'FedEx', estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
       { customerId: demoUser._id, items: [{ productId: 'p025', name: products[24].name, price: products[24].price, quantity: 1 }], total: 29.95, status: 'DELIVERED', createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
 
